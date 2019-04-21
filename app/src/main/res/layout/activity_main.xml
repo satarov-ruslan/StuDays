@@ -19,7 +19,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:padding="10dp"
-            android:text="@string/odd"
+            android:text="@string/odd_week_tab_title"
             android:textSize="22sp"
             android:textStyle="bold" />
 
@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:padding="10dp"
-            android:text="@string/even"
+            android:text="@string/even_week_tab_title"
             android:textSize="22sp"
             android:textStyle="bold" />
 

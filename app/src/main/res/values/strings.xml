@@ -54,8 +54,8 @@
         <item>По нечетным</item>
         <item>По четным</item>
     </string-array>
-    <string name="odd">Нечетные</string>
-    <string name="even">Четные</string>
+    <string name="odd_week_tab_title">I</string>
+    <string name="even_week_tab_title">II</string>
     <string name="lesson_beginning_hour_default">08</string>
     <string name="lesson_beginning_minute_default">00</string>
     <string name="lesson_ending_hour_default">09</string>

@@ -1,5 +1,6 @@
 package com.cit17b.studays;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -66,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         oddWeekTab.setBackgroundResource(R.color.colorPrimary);
         tabSelected = 1;
 
-        //fillDataArray();
+        fillDataArrayFromDB();
         fillLessonList();
 
         FloatingActionButton createLessonButton = findViewById(R.id.createLessonButton);
@@ -104,25 +106,64 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
+            SQLiteDatabase database = dbHelper.getWritableDatabase();
+            ContentValues values = new ContentValues();
+
+            Lesson lesson;
             switch (requestCode) {
                 case REQUEST_CODE_CREATE_LESSON:
                     if (data.hasExtra("lesson")) {
-                        lessons.add((Lesson) data.getSerializableExtra("lesson"));
+                        lesson = ((Lesson) data.getSerializableExtra("lesson"));
+
+                        values.put("id", lesson.getId());
+                        values.put("name", lesson.getName());
+                        values.put("lectureHall", lesson.getLectureHall());
+                        values.put("hourBeginning", lesson.getHourBeginning());
+                        values.put("minuteBeginning", lesson.getMinuteBeginning());
+                        values.put("hourEnding", lesson.getHourEnding());
+                        values.put("minuteEnding", lesson.getMinuteEnding());
+                        values.put("lecturer", lesson.getLecturer());
+                        values.put("lessonType", lesson.getLessonType());
+                        values.put("dayOfTheWeek", lesson.getDayOfTheWeek());
+                        values.put("oddEvenWeek", lesson.getOddEvenWeek());
+                        long rowID = database.insert(getString(R.string.table_lessons_name), null, values);
+                        Log.d(getString(R.string.db_log_tag), "row inserted, ID = " + rowID);
+
+                        lessons.add(lesson);
+                        //fillDataArrayFromDB();
                     }
                     fillLessonList();
                     break;
                 case REQUEST_CODE_EDIT_LESSON:
                     if (data.hasExtra("lesson")) {
+                        lesson = (Lesson) data.getSerializableExtra("lesson");
+
+                        values.put("name", lesson.getName());
+                        values.put("lectureHall", lesson.getLectureHall());
+                        values.put("hourBeginning", lesson.getHourBeginning());
+                        values.put("minuteBeginning", lesson.getMinuteBeginning());
+                        values.put("hourEnding", lesson.getHourEnding());
+                        values.put("minuteEnding", lesson.getMinuteEnding());
+                        values.put("lecturer", lesson.getLecturer());
+                        values.put("lessonType", lesson.getLessonType());
+                        values.put("dayOfTheWeek", lesson.getDayOfTheWeek());
+                        values.put("oddEvenWeek", lesson.getOddEvenWeek());
+                        long rowID = database.update(getString(R.string.table_lessons_name), values, "id = ?", new String[] {String.valueOf(lesson.getId())});
+                        Log.d(getString(R.string.db_log_tag), "row updated, ID = " + rowID);
+
                         for (int i = 0; i < lessons.size(); i++) {
                             if (lessons.get(i).getId() == lessonIdSelected) {
-                                lessons.set(i, (Lesson) data.getSerializableExtra("lesson"));
+                                lessons.set(i, lesson);
                                 break;
                             }
                         }
+                        ////fillDataArrayFromDB();
                     }
                     fillLessonList();
                     break;
             }
+            database.close();
+            dbHelper.close();
         }
     }
 
@@ -156,6 +197,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 for (Iterator<Lesson> iterator = lessons.iterator(); iterator.hasNext(); ) {
                     lesson = iterator.next();
                     if (lesson.getId() == lessonIdSelected) {
+                        SQLiteDatabase database = dbHelper.getWritableDatabase();
+                        database.delete(getString(R.string.table_lessons_name), "id = ?", new String[]{String.valueOf(lesson.getId())});
+                        database.close();
+                        dbHelper.close();
                         iterator.remove();
                         fillLessonList();
                         break;
@@ -215,18 +260,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void fillDataArray() {
+    private void fillDataArrayFromDB() {
         lessons.clear();
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         Cursor cursor = database.query(getString(R.string.table_lessons_name), null, null, null, null, null, null);
 
         if (cursor.moveToFirst()) {
+                       int idColIndex = cursor.getColumnIndex("id");
+            int nameColIndex = cursor.getColumnIndex("name");
+            int lectureHallColIndex = cursor.getColumnIndex("lectureHall");
+            int hourBeginningColIndex = cursor.getColumnIndex("hourBeginning");
+            int minuteBeginningColIndex = cursor.getColumnIndex("minuteBeginning");
+            int hourEndingColIndex = cursor.getColumnIndex("hourEnding");
+            int minuteEndingColIndex = cursor.getColumnIndex("minuteEnding");
+            int lecturerColIndex = cursor.getColumnIndex("lecturer");
+            int lessonTypeColIndex = cursor.getColumnIndex("lessonType");
+            int dayOfTheWeekColIndex = cursor.getColumnIndex("dayOfTheWeek");
+            int oddEvenWeekColIndex = cursor.getColumnIndex("oddEvenWeek");
 
+            do {
+                Lesson lesson = new Lesson();
+
+                lesson.setId(cursor.getInt(idColIndex));
+                lesson.setName(cursor.getString(nameColIndex));
+                lesson.setLectureHall(cursor.getString(lectureHallColIndex));
+                lesson.setHourBeginning(cursor.getInt(hourBeginningColIndex));
+                lesson.setMinuteBeginning(cursor.getInt(minuteBeginningColIndex));
+                lesson.setHourEnding(cursor.getInt(hourEndingColIndex));
+                lesson.setMinuteEnding(cursor.getInt(minuteEndingColIndex));
+                lesson.setLecturer(cursor.getString(lecturerColIndex));
+                lesson.setLessonType(cursor.getString(lessonTypeColIndex));
+                lesson.setDayOfTheWeek(cursor.getInt(dayOfTheWeekColIndex));
+                lesson.setOddEvenWeek(cursor.getInt(oddEvenWeekColIndex));
+
+                lessons.add(lesson);
+            } while (cursor.moveToNext());
         }
 
         cursor.close();
-
+        database.close();
+        dbHelper.close();
         //for (int i = 1; i <= 10; i++) {
         //    lessons.add(new Lesson(
         //            0,
