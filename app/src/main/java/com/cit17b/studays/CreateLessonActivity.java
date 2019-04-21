@@ -151,6 +151,9 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
                             dayOfTheWeekNumber,
                             oddEvenWeekNumber
                     );
+                    if (intent.getIntExtra("requestCode", 0) == MainActivity.REQUEST_CODE_EDIT_LESSON) {
+                        lesson.setId(((Lesson) intent.getSerializableExtra("lesson")).getId());
+                    }
                     intent.putExtra("lesson", lesson);
 
                     setResult(RESULT_OK, intent);
