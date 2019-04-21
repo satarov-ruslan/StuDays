@@ -1,0 +1,64 @@
+<resources>
+    <string name="app_name">StuDays</string>
+    <string name="db_name">studaysDB</string>
+    <string name="db_log_tag">DB_LOG</string>
+    <string name="create_table_lessons_sql">CREATE TABLE IF NOT EXISTS lessons(id INTEGER PRIMARY KEY, name text, lectureHall text, hourBeginning int, minuteBeginning int, hourEnding int, minuteEnding int, lecturer text, lessonType text, dayOfTheWeek int, oddEvenWeek int);</string>
+    <string name="table_lessons_name">lessons</string>
+    <string name="lesson">Предмет</string>
+    <string name="lecturer">Преподаватель</string>
+    <string name="lecture_hall">Аудитория</string>
+    <string name="create">Создать</string>
+    <string name="add">Добавить</string>
+    <string name="edit">Редактировать</string>
+    <string name="delete">Удалить</string>
+    <string name="save">Сохранить</string>
+    <string name="ok">OK</string>
+    <string name="lesson_type">Тип занятия</string>
+    <string name="beginning">Начало</string>
+    <string name="ending">Конец</string>
+    <string name="lesson_type_default">Лекция</string>
+    <string-array name="lesson_types">
+        <item>Лекция</item>
+        <item>Семинар</item>
+        <item>Практика</item>
+        <item>Лабораторная</item>
+        <item>Консультация</item>
+        <item>Зачет</item>
+        <item>Экзамен</item>
+    </string-array>
+    <string name="dot">.</string>
+    <string name="dash">-</string>
+    <string name="colon">:</string>
+    <string name="vertical_bar">|</string>
+    <string name="day_of_the_week">День недели</string>
+    <string-array name="days_of_the_week">
+        <item>Понедельник</item>
+        <item>Вторник</item>
+        <item>Среда</item>
+        <item>Четверг</item>
+        <item>Пятница</item>
+        <item>Суббота</item>
+        <item>Воскресенье</item>
+    </string-array>
+    <string-array name="days_of_the_week_abridged">
+        <item>Пн</item>
+        <item>Вт</item>
+        <item>Ср</item>
+        <item>Чт</item>
+        <item>Пт</item>
+        <item>Сб</item>
+        <item>Вс</item>
+    </string-array>
+    <string-array name="odd_even_week">
+        <item>Еженедельно</item>
+        <item>По нечетным</item>
+        <item>По четным</item>
+    </string-array>
+    <string name="odd">Нечетные</string>
+    <string name="even">Четные</string>
+    <string name="lesson_beginning_hour_default">08</string>
+    <string name="lesson_beginning_minute_default">00</string>
+    <string name="lesson_ending_hour_default">09</string>
+    <string name="lesson_ending_minute_default">30</string>
+    <string name="please_fill_all_fields">Пожалуйста, заполните все поля</string>
+</resources>
