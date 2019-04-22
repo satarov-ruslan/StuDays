@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
@@ -89,7 +88,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     private class TimetableFragmentPagerAdapter extends FragmentPagerAdapter {
 
-        String[] titles = getResources().getStringArray(R.array.odd_even_week);
+        String[] titles = getResources().getStringArray(R.array.timetable_week_labels);
 
         public TimetableFragmentPagerAdapter(FragmentManager fm) {
             super(fm);

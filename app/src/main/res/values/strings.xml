@@ -54,8 +54,12 @@
         <item>По четным</item>
         <item>Еженедельно</item>
     </string-array>
-    <string name="odd_week_tab_title">I</string>
-    <string name="even_week_tab_title">II</string>
+    <string-array name="timetable_week_labels">
+        <item>I неделя</item>
+        <item>II неделя</item>
+    </string-array>
+    <string name="odd_week_tab_title">I неделя</string>
+    <string name="even_week_tab_title">II неделя</string>
     <string name="lesson_beginning_hour_default">08</string>
     <string name="lesson_beginning_minute_default">00</string>
     <string name="lesson_ending_hour_default">09</string>

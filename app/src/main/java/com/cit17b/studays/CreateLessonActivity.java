@@ -253,7 +253,7 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
             }
         } else {
             lessonType.setText(lessonTypesArray[0]);
-            oddEvenWeekNumber = 0;
+            oddEvenWeekNumber = 2;
             oddEvenWeek.setText(oddEvenWeekArray[2]);
             dayOfTheWeekNumber = 0;
             dayOfTheWeek.setText(daysOfTheWeekAbridgedArray[0]);

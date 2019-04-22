@@ -1,7 +1,6 @@
 package com.cit17b.studays;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -21,7 +19,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Locale;
 
 public class TimetablePageFragment extends Fragment {
@@ -101,11 +98,9 @@ public class TimetablePageFragment extends Fragment {
                 intent.putExtra("id", lessonIdSelected);
 
                 startActivityForResult(intent, CreateLessonActivity.REQUEST_CODE_EDIT_LESSON);
-                break;
+                return true;
+                //break;
             case CONTEXT_MENU_DELETE:
-                //for (Iterator<Lesson> iterator = lessons.iterator(); iterator.hasNext(); ) {
-                //Lesson lesson = iterator.next();
-                //if (lesson.getId() == lessonIdSelected) {
                 SQLiteDatabase database = dbHelper.getWritableDatabase();
                 database.delete(getString(R.string.table_lessons_name), "id = ?", new String[]{String.valueOf(lessonIdSelected)});
                 database.close();
@@ -113,12 +108,8 @@ public class TimetablePageFragment extends Fragment {
                 for (Fragment fragment : getFragmentManager().getFragments()) {
                     getFragmentManager().beginTransaction().detach(fragment).attach(fragment).commit();
                 }
-                //iterator.remove();
                 fillDataArrayFromDB();
                 fillLessonList();
-                //break;
-            // }
-            //}
             break;
         }
         return super.onContextItemSelected(item);
