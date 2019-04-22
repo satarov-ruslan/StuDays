@@ -243,9 +243,9 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
                     hourEnding.setText(String.format(Locale.getDefault(), "%02d", cursor.getInt(hourEndingColIndex)));
                     minuteEnding.setText(String.format(Locale.getDefault(), "%02d", cursor.getInt(minuteEndingColIndex)));
                     lessonType.setText(cursor.getString(lessonTypeColIndex));
-                    oddEvenWeekNumber = cursor.getInt(dayOfTheWeekColIndex);
+                    oddEvenWeekNumber = cursor.getInt(oddEvenWeekColIndex);
                     oddEvenWeek.setText(oddEvenWeekArray[oddEvenWeekNumber]);
-                    dayOfTheWeekNumber = cursor.getInt(oddEvenWeekColIndex);
+                    dayOfTheWeekNumber = cursor.getInt(dayOfTheWeekColIndex);
                     dayOfTheWeek.setText(daysOfTheWeekAbridgedArray[dayOfTheWeekNumber]);
                 }
 
@@ -254,7 +254,7 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         } else {
             lessonType.setText(lessonTypesArray[0]);
             oddEvenWeekNumber = 0;
-            oddEvenWeek.setText(oddEvenWeekArray[0]);
+            oddEvenWeek.setText(oddEvenWeekArray[2]);
             dayOfTheWeekNumber = 0;
             dayOfTheWeek.setText(daysOfTheWeekAbridgedArray[0]);
         }

@@ -4,14 +4,14 @@ import java.io.Serializable;
 
 public class Lesson implements Serializable {
 
-    /** По четным и нечетным неделям */
-    public static final int BOTH_WEEKS = 0;
-
     /** По нечетным неделям */
-    public static final int ODD_WEEK = 1;
+    public static final int ODD_WEEK = 0;
 
     /** По четным неделям */
-    public static final int EVEN_WEEK = 2;
+    public static final int EVEN_WEEK = 1;
+
+    /** По четным и нечетным неделям */
+    public static final int BOTH_WEEKS = 2;
 
     ////////////////////////////////////////////////
 

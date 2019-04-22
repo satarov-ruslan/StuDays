@@ -1,10 +1,6 @@
 package com.cit17b.studays;
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -12,19 +8,13 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.MenuItem;
+import android.util.TypedValue;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Locale;
+import java.util.List;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener {
 
@@ -33,6 +23,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     ViewPager timetablePager;
     FragmentPagerAdapter pagerAdapter;
+    PagerTabStrip timetablePagerTabStrip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +33,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         timetablePager = findViewById(R.id.timetablePager);
         pagerAdapter = new TimetableFragmentPagerAdapter(getSupportFragmentManager());
         timetablePager.setAdapter(pagerAdapter);
+        timetablePagerTabStrip = timetablePager.findViewById(R.id.timetablePagerTabStrip);
+
+        timetablePagerTabStrip.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
 
         FloatingActionButton createLessonButton = findViewById(R.id.createLessonButton);
         createLessonButton.setOnClickListener(this);
+
 
         /*
         timetablePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -83,11 +78,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case CreateLessonActivity.REQUEST_CODE_CREATE_LESSON:
-                    for (int i = 0; i < pagerAdapter.getCount(); i++) {
-                        pagerAdapter.getItem(i);
-                        //TimetablePageFragment fragment = (TimetablePageFragment) pagerAdapter.getItem(i);
-                        //fragment.fillDataArrayFromDB();
-                        //fragment.fillLessonList();
+                    List<Fragment> fragments = getSupportFragmentManager().getFragments();
+                    for (Fragment fragment : fragments) {
+                        getSupportFragmentManager().beginTransaction().detach(fragment).attach(fragment).commit();
                     }
                     break;
             }
@@ -96,8 +89,20 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     private class TimetableFragmentPagerAdapter extends FragmentPagerAdapter {
 
+        String[] titles = getResources().getStringArray(R.array.odd_even_week);
+
         public TimetableFragmentPagerAdapter(FragmentManager fm) {
             super(fm);
+        }
+
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            if (position <= titles.length) {
+                return titles[position];
+            }
+            return super.getPageTitle(position);
         }
 
         @Override

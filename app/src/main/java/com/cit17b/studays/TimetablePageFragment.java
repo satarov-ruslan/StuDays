@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -27,10 +28,14 @@ public class TimetablePageFragment extends Fragment {
 
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
 
+    static final String TIMETABLE_PAGE_FRAGMENT_LOG = "TIMETABLE_PAGE_FRAGMENT";
+
     public static final int CONTEXT_MENU_EDIT = 10001;
     public static final int CONTEXT_MENU_DELETE = 10002;
 
-    /** Номер страницы (играет роль учебной недели) */
+    /**
+     * Номер страницы (играет роль учебной недели)
+     */
     int pageNumber;
 
     ArrayList<Lesson> lessons;
@@ -57,12 +62,18 @@ public class TimetablePageFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pageNumber = getArguments().getInt(ARGUMENT_PAGE_NUMBER);
+        Log.d(TIMETABLE_PAGE_FRAGMENT_LOG, "pageNumber = " + pageNumber);
         dbHelper = new DBHelper(getContext());
 
         lessons = new ArrayList<>();
         daysOfTheWeekLabels = getResources().getStringArray(R.array.days_of_the_week);
+    }
 
+    @Override
+    public void onResume() {
         fillDataArrayFromDB();
+        fillLessonList();
+        super.onResume();
     }
 
     @Nullable
@@ -70,7 +81,6 @@ public class TimetablePageFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.timetable_fragment, null);
         lessonList = view.findViewById(R.id.lessonList);
-        fillLessonList();
         return view;
     }
 
@@ -86,34 +96,30 @@ public class TimetablePageFragment extends Fragment {
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case CONTEXT_MENU_EDIT:
-                Lesson lesson = null;
-                for (Lesson lessonIter : lessons) {
-                    if (lessonIter.getId() == lessonIdSelected) {
-                        lesson = lessonIter;
-                        break;
-                    }
-                }
-
                 Intent intent = new Intent(getContext(), CreateLessonActivity.class);
                 intent.putExtra("requestCode", CreateLessonActivity.REQUEST_CODE_EDIT_LESSON);
-                intent.putExtra("lesson", lesson);
+                intent.putExtra("id", lessonIdSelected);
 
                 startActivityForResult(intent, CreateLessonActivity.REQUEST_CODE_EDIT_LESSON);
                 break;
             case CONTEXT_MENU_DELETE:
-                for (Iterator<Lesson> iterator = lessons.iterator(); iterator.hasNext(); ) {
-                    lesson = iterator.next();
-                    if (lesson.getId() == lessonIdSelected) {
-                        SQLiteDatabase database = dbHelper.getWritableDatabase();
-                        database.delete(getString(R.string.table_lessons_name), "id = ?", new String[]{String.valueOf(lesson.getId())});
-                        database.close();
-                        dbHelper.close();
-                        iterator.remove();
-                        fillLessonList();
-                        break;
-                    }
+                //for (Iterator<Lesson> iterator = lessons.iterator(); iterator.hasNext(); ) {
+                //Lesson lesson = iterator.next();
+                //if (lesson.getId() == lessonIdSelected) {
+                SQLiteDatabase database = dbHelper.getWritableDatabase();
+                database.delete(getString(R.string.table_lessons_name), "id = ?", new String[]{String.valueOf(lessonIdSelected)});
+                database.close();
+                dbHelper.close();
+                for (Fragment fragment : getFragmentManager().getFragments()) {
+                    getFragmentManager().beginTransaction().detach(fragment).attach(fragment).commit();
                 }
-                break;
+                //iterator.remove();
+                fillDataArrayFromDB();
+                fillLessonList();
+                //break;
+            // }
+            //}
+            break;
         }
         return super.onContextItemSelected(item);
     }

@@ -50,9 +50,9 @@
         <item>Вс</item>
     </string-array>
     <string-array name="odd_even_week">
-        <item>Еженедельно</item>
         <item>По нечетным</item>
         <item>По четным</item>
+        <item>Еженедельно</item>
     </string-array>
     <string name="odd_week_tab_title">I</string>
     <string name="even_week_tab_title">II</string>
