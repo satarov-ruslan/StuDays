@@ -18,9 +18,6 @@ public class Lesson implements Serializable {
     /** ID предмета (генерируется автоматически) */
     private int id;
 
-    /** Номер занятия в списке (присваивается во время сортировки перед отображением) */
-    private int listNum;
-
     /** Название */
     private String name;
 
@@ -54,9 +51,8 @@ public class Lesson implements Serializable {
     public Lesson() {
     }
 
-    public Lesson(int listNum, String name, String lectureHall, int hourBeginning, int minuteBeginning, int hourEnding, int minuteEnding, String lecturer, String lessonType, int dayOfTheWeek, int oddEvenWeek) {
-        this.id = (int) (Math.random() * Integer.MAX_VALUE);
-        this.listNum = listNum;
+    public Lesson(int id, String name, String lectureHall, int hourBeginning, int minuteBeginning, int hourEnding, int minuteEnding, String lecturer, String lessonType, int dayOfTheWeek, int oddEvenWeek) {
+        this.id = id;
         this.name = name;
         this.lectureHall = lectureHall;
         this.hourBeginning = hourBeginning;
@@ -75,14 +71,6 @@ public class Lesson implements Serializable {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getListNum() {
-        return listNum;
-    }
-
-    public void setListNum(int listNum) {
-        this.listNum = listNum;
     }
 
     public String getName() {

@@ -1,10 +1,14 @@
 package com.cit17b.studays;
 
 import android.app.TimePickerDialog;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,6 +20,9 @@ import android.widget.Toast;
 import java.util.Locale;
 
 public class CreateLessonActivity extends AppCompatActivity implements View.OnClickListener {
+
+    public static final int REQUEST_CODE_CREATE_LESSON = 1001;
+    public static final int REQUEST_CODE_EDIT_LESSON = 1002;
 
     public static final int REQUEST_CODE_LESSON_TYPE = 101;
     public static final int REQUEST_CODE_DAY_OF_THE_WEEK = 102;
@@ -50,15 +57,18 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
     String[] oddEvenWeekArray;
     String[] lessonTypesArray;
 
+    DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_lesson);
 
-        if (getIntent().getIntExtra("requestCode", 0) == MainActivity.REQUEST_CODE_EDIT_LESSON) {
+        if (getIntent().getIntExtra("requestCode", 0) == REQUEST_CODE_EDIT_LESSON) {
             setTitle(R.string.edit);
         }
+
+        dbHelper = new DBHelper(this);
 
         daysOfTheWeekAbridgedArray = getResources().getStringArray(R.array.days_of_the_week_abridged);
         lessonTypesArray = getResources().getStringArray(R.array.lesson_types);
@@ -135,26 +145,40 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
                 startActivityForResult(intent, REQUEST_CODE_DAY_OF_THE_WEEK);
                 break;
             case R.id.createLessonSubmitButton:
+                // TODO: Проверка, чтоб время начала урока было раньше времени конца
                 if (checkResult()) {
+                    SQLiteDatabase database = dbHelper.getWritableDatabase();
+                    ContentValues values = new ContentValues();
                     intent = getIntent();
 
-                    Lesson lesson = new Lesson(
-                            0,
-                            name.getText().toString(),
-                            lectureHall.getText().toString(),
-                            Integer.parseInt(hourBeginning.getText().toString()),
-                            Integer.parseInt(minuteBeginning.getText().toString()),
-                            Integer.parseInt(hourEnding.getText().toString()),
-                            Integer.parseInt(minuteEnding.getText().toString()),
-                            lecturer.getText().toString(),
-                            lessonType.getText().toString(),
-                            dayOfTheWeekNumber,
-                            oddEvenWeekNumber
-                    );
-                    if (intent.getIntExtra("requestCode", 0) == MainActivity.REQUEST_CODE_EDIT_LESSON) {
-                        lesson.setId(((Lesson) intent.getSerializableExtra("lesson")).getId());
+                    values.put("name", name.getText().toString());
+                    values.put("lectureHall", lectureHall.getText().toString());
+                    values.put("hourBeginning", Integer.parseInt(hourBeginning.getText().toString()));
+                    values.put("minuteBeginning", Integer.parseInt(minuteBeginning.getText().toString()));
+                    values.put("hourEnding", Integer.parseInt(hourEnding.getText().toString()));
+                    values.put("minuteEnding", Integer.parseInt(minuteEnding.getText().toString()));
+                    values.put("lecturer", lecturer.getText().toString());
+                    values.put("lessonType", lessonType.getText().toString());
+                    values.put("dayOfTheWeek", dayOfTheWeekNumber);
+                    values.put("oddEvenWeek", oddEvenWeekNumber);
+
+                    if (intent.getIntExtra("requestCode", 0) == REQUEST_CODE_EDIT_LESSON
+                            && intent.hasExtra("id")) {
+                        long rowID = database.update(
+                                getString(R.string.table_lessons_name),
+                                values,
+                                "id = ?",
+                                new String[]{String.valueOf(intent.getIntExtra("id", 0))});
+                        Log.d(getString(R.string.db_log_tag), "row updated, ID = " + rowID);
+                    } else {
+                        int generatedId = (int) (Math.random() * Integer.MAX_VALUE);
+                        values.put("id", generatedId);
+                        long rowID = database.insert(getString(R.string.table_lessons_name), null, values);
+                        Log.d(getString(R.string.db_log_tag), "row inserted, ID = " + rowID);
                     }
-                    intent.putExtra("lesson", lesson);
+
+                    database.close();
+                    dbHelper.close();
 
                     setResult(RESULT_OK, intent);
                     finish();
@@ -191,20 +215,42 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
     private void fillFields() {
         Intent intent = getIntent();
         int requestCode = intent.getIntExtra("requestCode", 0);
-        if (requestCode == MainActivity.REQUEST_CODE_EDIT_LESSON) {
-            Lesson lesson = (Lesson) intent.getSerializableExtra("lesson");
-            name.setText(lesson.getName());
-            lecturer.setText(lesson.getLecturer());
-            lectureHall.setText(lesson.getLectureHall());
-            hourBeginning.setText(String.format(Locale.getDefault(), "%02d", lesson.getHourBeginning()));
-            minuteBeginning.setText(String.format(Locale.getDefault(), "%02d", lesson.getMinuteBeginning()));
-            hourEnding.setText(String.format(Locale.getDefault(), "%02d", lesson.getHourEnding()));
-            minuteEnding.setText(String.format(Locale.getDefault(), "%02d", lesson.getMinuteEnding()));
-            lessonType.setText(lesson.getLessonType());
-            oddEvenWeekNumber = lesson.getOddEvenWeek();
-            oddEvenWeek.setText(oddEvenWeekArray[oddEvenWeekNumber]);
-            dayOfTheWeekNumber = lesson.getDayOfTheWeek();
-            dayOfTheWeek.setText(daysOfTheWeekAbridgedArray[dayOfTheWeekNumber]);
+        if (requestCode == REQUEST_CODE_EDIT_LESSON
+                && intent.hasExtra("id")) {
+            SQLiteDatabase database = dbHelper.getReadableDatabase();
+            String selection = "id = ?";
+            String[] selectionArgs = new String[]{String.valueOf(intent.getIntExtra("id", 0))};
+            Cursor cursor = database.query(getString(R.string.table_lessons_name), null, selection, selectionArgs, null, null, null);
+
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    int nameColIndex = cursor.getColumnIndex("name");
+                    int lectureHallColIndex = cursor.getColumnIndex("lectureHall");
+                    int hourBeginningColIndex = cursor.getColumnIndex("hourBeginning");
+                    int minuteBeginningColIndex = cursor.getColumnIndex("minuteBeginning");
+                    int hourEndingColIndex = cursor.getColumnIndex("hourEnding");
+                    int minuteEndingColIndex = cursor.getColumnIndex("minuteEnding");
+                    int lecturerColIndex = cursor.getColumnIndex("lecturer");
+                    int lessonTypeColIndex = cursor.getColumnIndex("lessonType");
+                    int dayOfTheWeekColIndex = cursor.getColumnIndex("dayOfTheWeek");
+                    int oddEvenWeekColIndex = cursor.getColumnIndex("oddEvenWeek");
+
+                    name.setText(cursor.getString(nameColIndex));
+                    lecturer.setText(cursor.getString(lecturerColIndex));
+                    lectureHall.setText(cursor.getString(lectureHallColIndex));
+                    hourBeginning.setText(String.format(Locale.getDefault(), "%02d", cursor.getInt(hourBeginningColIndex)));
+                    minuteBeginning.setText(String.format(Locale.getDefault(), "%02d", cursor.getInt(minuteBeginningColIndex)));
+                    hourEnding.setText(String.format(Locale.getDefault(), "%02d", cursor.getInt(hourEndingColIndex)));
+                    minuteEnding.setText(String.format(Locale.getDefault(), "%02d", cursor.getInt(minuteEndingColIndex)));
+                    lessonType.setText(cursor.getString(lessonTypeColIndex));
+                    oddEvenWeekNumber = cursor.getInt(dayOfTheWeekColIndex);
+                    oddEvenWeek.setText(oddEvenWeekArray[oddEvenWeekNumber]);
+                    dayOfTheWeekNumber = cursor.getInt(oddEvenWeekColIndex);
+                    dayOfTheWeek.setText(daysOfTheWeekAbridgedArray[dayOfTheWeekNumber]);
+                }
+
+                cursor.close();
+            }
         } else {
             lessonType.setText(lessonTypesArray[0]);
             oddEvenWeekNumber = 0;

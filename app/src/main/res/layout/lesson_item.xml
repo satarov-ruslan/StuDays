@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/tvLessonListNum"
+        android:id="@+id/tvLessonPositionInList"
         android:layout_width="16dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -24,8 +24,8 @@
         android:layout_height="wrap_content"
         android:text="@string/dot"
         android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/tvLessonListNum"
-        app:layout_constraintTop_toTopOf="@+id/tvLessonListNum" />
+        app:layout_constraintStart_toEndOf="@+id/tvLessonPositionInList"
+        app:layout_constraintTop_toTopOf="@+id/tvLessonPositionInList" />
 
     <TextView
         android:id="@+id/tvLessonName"
@@ -34,7 +34,7 @@
         android:layout_marginStart="8dp"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="@+id/tvLessonListNum"
+        app:layout_constraintTop_toTopOf="@+id/tvLessonPositionInList"
         tools:text="Lesson Name" />
 
     <TextView
@@ -144,6 +144,6 @@
         android:layout_marginEnd="8dp"
         android:background="@android:color/darker_gray"
         app:layout_constraintEnd_toEndOf="@+id/tvLessonLectureHall"
-        app:layout_constraintStart_toStartOf="@+id/tvLessonListNum"
+        app:layout_constraintStart_toStartOf="@+id/tvLessonPositionInList"
         app:layout_constraintTop_toBottomOf="@+id/tvLessonType" />
 </android.support.constraint.ConstraintLayout>
