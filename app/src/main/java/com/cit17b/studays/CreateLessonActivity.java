@@ -9,8 +9,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -47,8 +48,6 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
     LinearLayout timeBeginningLayout;
     LinearLayout timeEndingLayout;
     LinearLayout dayOfTheWeekLayout;
-
-    Button submitButton;
 
     TimePickerDialog.OnTimeSetListener timeBeginningListener;
     TimePickerDialog.OnTimeSetListener timeEndingListener;
@@ -89,12 +88,9 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         timeEndingLayout = findViewById(R.id.createLessonEndingLayout);
         dayOfTheWeekLayout = findViewById(R.id.createLessonDayOfTheWeekLayout);
 
-        submitButton = findViewById(R.id.createLessonSubmitButton);
-
         timeBeginningLayout.setOnClickListener(this);
         timeEndingLayout.setOnClickListener(this);
         lessonType.setOnClickListener(this);
-        submitButton.setOnClickListener(this);
         dayOfTheWeekLayout.setOnClickListener(this);
 
         fillFields();
@@ -117,39 +113,25 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
     }
 
     @Override
-    public void onClick(View v) {
-        Intent intent;
-        switch (v.getId()) {
-            case R.id.createLessonBeginningLayout:
-                new TimePickerDialog(this,
-                        R.style.TimePickerTheme,
-                        timeBeginningListener,
-                        Integer.parseInt(getString(R.string.lesson_beginning_hour_default)),
-                        Integer.parseInt(getString(R.string.lesson_beginning_minute_default)),
-                        true).show();
-                break;
-            case R.id.createLessonEndingLayout:
-                new TimePickerDialog(this,
-                        R.style.TimePickerTheme,
-                        timeEndingListener,
-                        Integer.parseInt(getString(R.string.lesson_ending_hour_default)),
-                        Integer.parseInt(getString(R.string.lesson_ending_minute_default)),
-                        true).show();
-                break;
-            case R.id.createLessonTypeField:
-                intent = new Intent(this, LessonTypeDialog.class);
-                startActivityForResult(intent, REQUEST_CODE_LESSON_TYPE);
-                break;
-            case R.id.createLessonDayOfTheWeekLayout:
-                intent = new Intent(this, DayOfTheWeekDialog.class);
-                startActivityForResult(intent, REQUEST_CODE_DAY_OF_THE_WEEK);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.create_lesson_menu, menu);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = getIntent();
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                setResult(RESULT_CANCELED, intent);
+                finish();
                 break;
             case R.id.createLessonSubmitButton:
                 if (checkTime()) {
                     if (checkInputFields()) {
                         SQLiteDatabase database = dbHelper.getWritableDatabase();
                         ContentValues values = new ContentValues();
-                        intent = getIntent();
 
                         values.put("name", name.getText().toString());
                         values.put("lectureHall", lectureHall.getText().toString());
@@ -188,6 +170,39 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
                 } else {
                     Toast.makeText(this, getString(R.string.time_order_error_message), Toast.LENGTH_LONG).show();;
                 }
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent;
+        switch (v.getId()) {
+            case R.id.createLessonBeginningLayout:
+                new TimePickerDialog(this,
+                        R.style.TimePickerTheme,
+                        timeBeginningListener,
+                        Integer.parseInt(getString(R.string.lesson_beginning_hour_default)),
+                        Integer.parseInt(getString(R.string.lesson_beginning_minute_default)),
+                        true).show();
+                break;
+            case R.id.createLessonEndingLayout:
+                new TimePickerDialog(this,
+                        R.style.TimePickerTheme,
+                        timeEndingListener,
+                        Integer.parseInt(getString(R.string.lesson_ending_hour_default)),
+                        Integer.parseInt(getString(R.string.lesson_ending_minute_default)),
+                        true).show();
+                break;
+            case R.id.createLessonTypeField:
+                intent = new Intent(this, LessonTypeDialog.class);
+                startActivityForResult(intent, REQUEST_CODE_LESSON_TYPE);
+                break;
+            case R.id.createLessonDayOfTheWeekLayout:
+                intent = new Intent(this, DayOfTheWeekDialog.class);
+                startActivityForResult(intent, REQUEST_CODE_DAY_OF_THE_WEEK);
                 break;
         }
     }

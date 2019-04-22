@@ -11,6 +11,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".NoteListActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".DayOfTheWeekDialog"
             android:label="@string/day_of_the_week"
@@ -24,8 +26,9 @@
         <activity
             android:name=".CreateLessonActivity"
             android:label="@string/create"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
