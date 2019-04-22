@@ -145,45 +145,48 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
                 startActivityForResult(intent, REQUEST_CODE_DAY_OF_THE_WEEK);
                 break;
             case R.id.createLessonSubmitButton:
-                // TODO: Проверка, чтоб время начала урока было раньше времени конца
-                if (checkResult()) {
-                    SQLiteDatabase database = dbHelper.getWritableDatabase();
-                    ContentValues values = new ContentValues();
-                    intent = getIntent();
+                if (checkTime()) {
+                    if (checkInputFields()) {
+                        SQLiteDatabase database = dbHelper.getWritableDatabase();
+                        ContentValues values = new ContentValues();
+                        intent = getIntent();
 
-                    values.put("name", name.getText().toString());
-                    values.put("lectureHall", lectureHall.getText().toString());
-                    values.put("hourBeginning", Integer.parseInt(hourBeginning.getText().toString()));
-                    values.put("minuteBeginning", Integer.parseInt(minuteBeginning.getText().toString()));
-                    values.put("hourEnding", Integer.parseInt(hourEnding.getText().toString()));
-                    values.put("minuteEnding", Integer.parseInt(minuteEnding.getText().toString()));
-                    values.put("lecturer", lecturer.getText().toString());
-                    values.put("lessonType", lessonType.getText().toString());
-                    values.put("dayOfTheWeek", dayOfTheWeekNumber);
-                    values.put("oddEvenWeek", oddEvenWeekNumber);
+                        values.put("name", name.getText().toString());
+                        values.put("lectureHall", lectureHall.getText().toString());
+                        values.put("hourBeginning", Integer.parseInt(hourBeginning.getText().toString()));
+                        values.put("minuteBeginning", Integer.parseInt(minuteBeginning.getText().toString()));
+                        values.put("hourEnding", Integer.parseInt(hourEnding.getText().toString()));
+                        values.put("minuteEnding", Integer.parseInt(minuteEnding.getText().toString()));
+                        values.put("lecturer", lecturer.getText().toString());
+                        values.put("lessonType", lessonType.getText().toString());
+                        values.put("dayOfTheWeek", dayOfTheWeekNumber);
+                        values.put("oddEvenWeek", oddEvenWeekNumber);
 
-                    if (intent.getIntExtra("requestCode", 0) == REQUEST_CODE_EDIT_LESSON
-                            && intent.hasExtra("id")) {
-                        long rowID = database.update(
-                                getString(R.string.table_lessons_name),
-                                values,
-                                "id = ?",
-                                new String[]{String.valueOf(intent.getIntExtra("id", 0))});
-                        Log.d(getString(R.string.db_log_tag), "row updated, ID = " + rowID);
+                        if (intent.getIntExtra("requestCode", 0) == REQUEST_CODE_EDIT_LESSON
+                                && intent.hasExtra("id")) {
+                            long rowID = database.update(
+                                    getString(R.string.table_lessons_name),
+                                    values,
+                                    "id = ?",
+                                    new String[]{String.valueOf(intent.getIntExtra("id", 0))});
+                            Log.d(getString(R.string.db_log_tag), "row updated, ID = " + rowID);
+                        } else {
+                            int generatedId = (int) (Math.random() * Integer.MAX_VALUE);
+                            values.put("id", generatedId);
+                            long rowID = database.insert(getString(R.string.table_lessons_name), null, values);
+                            Log.d(getString(R.string.db_log_tag), "row inserted, ID = " + rowID);
+                        }
+
+                        database.close();
+                        dbHelper.close();
+
+                        setResult(RESULT_OK, intent);
+                        finish();
                     } else {
-                        int generatedId = (int) (Math.random() * Integer.MAX_VALUE);
-                        values.put("id", generatedId);
-                        long rowID = database.insert(getString(R.string.table_lessons_name), null, values);
-                        Log.d(getString(R.string.db_log_tag), "row inserted, ID = " + rowID);
+                        Toast.makeText(this, getString(R.string.please_fill_all_fields), Toast.LENGTH_LONG).show();
                     }
-
-                    database.close();
-                    dbHelper.close();
-
-                    setResult(RESULT_OK, intent);
-                    finish();
                 } else {
-                    Toast.makeText(this, getString(R.string.please_fill_all_fields), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getString(R.string.time_order_error_message), Toast.LENGTH_LONG).show();;
                 }
                 break;
         }
@@ -260,9 +263,22 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
-    private boolean checkResult() {
-        return !(name.getText().toString().isEmpty()
-                || lecturer.getText().toString().isEmpty()
-                || lectureHall.getText().toString().isEmpty());
+    private boolean checkTime() {
+        int hBegin = Integer.parseInt(hourBeginning.getText().toString());
+        int hEnd = Integer.parseInt(hourEnding.getText().toString());
+
+        if (hBegin == hEnd) {
+            int mBegin = Integer.parseInt(minuteBeginning.getText().toString());
+            int mEnd = Integer.parseInt(minuteEnding.getText().toString());
+            return  mBegin < mEnd;
+        }
+
+        return hBegin < hEnd;
+    }
+
+    private boolean checkInputFields() {
+        return !(name.getText().toString().trim().isEmpty()
+                || lecturer.getText().toString().trim().isEmpty()
+                || lectureHall.getText().toString().trim().isEmpty());
     }
 }
