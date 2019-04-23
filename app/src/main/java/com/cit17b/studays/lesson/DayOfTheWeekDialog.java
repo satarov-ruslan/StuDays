@@ -1,16 +1,17 @@
-package com.cit17b.studays;
+package com.cit17b.studays.lesson;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Space;
 import android.widget.TextView;
+
+import com.cit17b.studays.R;
 
 public class DayOfTheWeekDialog extends AppCompatActivity implements View.OnClickListener {
 

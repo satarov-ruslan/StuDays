@@ -1,4 +1,4 @@
-package com.cit17b.studays;
+package com.cit17b.studays.note;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,11 +7,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
-import android.view.ContextMenu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.cit17b.studays.DBHelper;
+import com.cit17b.studays.R;
+import com.cit17b.studays.note.CreateNoteActivity;
+import com.cit17b.studays.note.Note;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.cit17b.studays;
+package com.cit17b.studays.lesson;
 
 import java.io.Serializable;
 

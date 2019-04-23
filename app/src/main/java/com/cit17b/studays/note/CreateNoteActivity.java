@@ -1,4 +1,4 @@
-package com.cit17b.studays;
+package com.cit17b.studays.note;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -13,6 +13,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+
+import com.cit17b.studays.DBHelper;
+import com.cit17b.studays.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

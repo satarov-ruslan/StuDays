@@ -1,16 +1,19 @@
-package com.cit17b.studays;
+package com.cit17b.studays.note;
 
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
+
+import com.cit17b.studays.DBHelper;
+import com.cit17b.studays.R;
+import com.cit17b.studays.note.CreateNoteActivity;
+import com.cit17b.studays.note.NoteList;
 
 public class NoteListActivity extends AppCompatActivity implements View.OnClickListener {
 

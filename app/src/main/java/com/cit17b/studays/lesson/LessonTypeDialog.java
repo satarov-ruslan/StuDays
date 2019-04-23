@@ -1,4 +1,4 @@
-package com.cit17b.studays;
+package com.cit17b.studays.lesson;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.cit17b.studays.R;
 
 public class LessonTypeDialog extends AppCompatActivity implements View.OnClickListener {
 

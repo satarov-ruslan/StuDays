@@ -12,24 +12,24 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".CreateNoteActivity"
+            android:name=".note.CreateNoteActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".NoteListActivity"
+            android:name=".note.NoteListActivity"
             android:label="@string/notes"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".DayOfTheWeekDialog"
+            android:name=".lesson.DayOfTheWeekDialog"
             android:label="@string/day_of_the_week"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
-            android:name=".LessonTypeDialog"
+            android:name=".lesson.LessonTypeDialog"
             android:label="@string/lesson_type"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
-            android:name=".CreateLessonActivity"
+            android:name=".lesson.CreateLessonActivity"
             android:label="@string/create"
             android:screenOrientation="portrait" />
         <activity

@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NoteListActivity">
+    tools:context=".note.NoteListActivity">
 
     <fragment
         android:id="@+id/noteList"
-        android:name="com.cit17b.studays.NoteList"
+        android:name="com.cit17b.studays.note.NoteList"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

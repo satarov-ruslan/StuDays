@@ -17,6 +17,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cit17b.studays.lesson.CreateLessonActivity;
+import com.cit17b.studays.lesson.Lesson;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Locale;

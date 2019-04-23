@@ -1,4 +1,4 @@
-package com.cit17b.studays;
+package com.cit17b.studays.lesson;
 
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
@@ -18,46 +18,136 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.cit17b.studays.DBHelper;
+import com.cit17b.studays.R;
+
 import java.util.Locale;
 
+/**
+ * Этот класс представляет из себя Activity, что отвечает за создание и редактирование
+ * занятия.
+ *
+ * @author Ruslan Satarov
+ * @version 1.2.3
+ * */
 public class CreateLessonActivity extends AppCompatActivity implements View.OnClickListener {
 
+    /**
+     * Параметры используются при вызове данного Activity из других классов.
+     * Параметры позволяют указать цель вызова Activity и на основе этого
+     * задать начальное состояние полей Activity.
+     * */
     public static final int REQUEST_CODE_CREATE_LESSON = 1001;
     public static final int REQUEST_CODE_EDIT_LESSON = 1002;
 
-    public static final int REQUEST_CODE_LESSON_TYPE = 101;
-    public static final int REQUEST_CODE_DAY_OF_THE_WEEK = 102;
+    /**
+     * Данный Activity использует эти параметры при создании диалоговых окон
+     * для выбора типа занятия или для недели. При проверки результатов работы диалогового окна
+     * параметры позволяют определить, что за диалоговое окно вызывалось, и на основе этого
+     * обработать результаты работы.
+     * */
+    private static final int REQUEST_CODE_LESSON_TYPE = 101;
+    private static final int REQUEST_CODE_DAY_OF_THE_WEEK = 102;
 
-    EditText name;
-    EditText lecturer;
-    EditText lectureHall;
+    /**
+     * Поле "Предмет".
+     * */
+    private EditText name;
 
-    TextView hourBeginning;
-    TextView minuteBeginning;
+    /**
+     * Поле "Преподаватель".
+     */
+    private EditText lecturer;
 
-    TextView hourEnding;
-    TextView minuteEnding;
+    /**
+     * Поле "Аудитория".
+     */
+    private EditText lectureHall;
 
-    TextView lessonType;
+    /**
+     * Поле часов начала занятия.
+     */
+    private TextView hourBeginning;
 
-    int oddEvenWeekNumber;
-    TextView oddEvenWeek;
-    int dayOfTheWeekNumber;
-    TextView dayOfTheWeek;
+    /**
+     * Поле минут начала занятия.
+     */
+    private TextView minuteBeginning;
 
-    LinearLayout timeBeginningLayout;
-    LinearLayout timeEndingLayout;
-    LinearLayout dayOfTheWeekLayout;
+    /**
+     * Поле часов конца занятия.
+     */
+    private TextView hourEnding;
 
-    TimePickerDialog.OnTimeSetListener timeBeginningListener;
-    TimePickerDialog.OnTimeSetListener timeEndingListener;
+    /**
+     * Поле минут конца занятия.
+     */
+    private TextView minuteEnding;
 
-    String[] daysOfTheWeekAbridgedArray;
-    String[] oddEvenWeekArray;
-    String[] lessonTypesArray;
+    /**
+     * Поле "Тип занятия".
+     */
+    private TextView lessonType;
 
-    DBHelper dbHelper;
+    /**
+     * Числовое представление череда недели, когда проходит занятие.
+     * 0 - по нечетным, 1 - по четным, 2 - каждую неделю.
+     */
+    private int oddEvenWeekNumber;
 
+    /**
+     * Поле череда недели.
+     */
+    private TextView oddEvenWeek;
+
+    /**
+     * Числовое представление дня недели.
+     * 0 - Понедельник, ..., 6 - Воскресенье.
+     */
+    private int dayOfTheWeekNumber;
+
+    /**
+     * Поле дня недели.
+     */
+    private TextView dayOfTheWeek;
+
+    /**
+     * Listener для диалога выбора времени начала занятия.
+     */
+    private TimePickerDialog.OnTimeSetListener timeBeginningListener;
+
+    /**
+     * Listener для диалога выбора времени конца занятия.
+     */
+    private TimePickerDialog.OnTimeSetListener timeEndingListener;
+
+    /**
+     * Массив, хранящий дни недели в текстовом виде в сокращенном формате.
+     */
+    private String[] daysOfTheWeekAbridgedArray;
+
+    /**
+     * Массив, хранящий череды недели в текстовом формате.
+     */
+    private String[] oddEvenWeekArray;
+
+    /**
+     * Массив, хранящий типы уроков в текстовом формате.
+     */
+    private String[] lessonTypesArray;
+
+    /**
+     * Объект для работы с базой данных.
+     */
+    private DBHelper dbHelper;
+
+    /**
+     * Вызывается при создании Activity.
+     *
+     * @param savedInstanceState Если Activity было заново инициализировано после того, как
+     *                           было закрыто, тогда этот Bundle содержит, которые он получил
+     *                           в onSaveInstanceState. В другом случае это null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,9 +174,9 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         oddEvenWeek = findViewById(R.id.createLessonOddEvenWeekField);
         dayOfTheWeek = findViewById(R.id.createLessonDayOfTheWeekField);
 
-        timeBeginningLayout = findViewById(R.id.createLessonBeginningLayout);
-        timeEndingLayout = findViewById(R.id.createLessonEndingLayout);
-        dayOfTheWeekLayout = findViewById(R.id.createLessonDayOfTheWeekLayout);
+        LinearLayout timeBeginningLayout = findViewById(R.id.createLessonBeginningLayout);
+        LinearLayout timeEndingLayout = findViewById(R.id.createLessonEndingLayout);
+        LinearLayout dayOfTheWeekLayout = findViewById(R.id.createLessonDayOfTheWeekLayout);
 
         timeBeginningLayout.setOnClickListener(this);
         timeEndingLayout.setOnClickListener(this);
@@ -112,6 +202,12 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         };
     }
 
+    /**
+     * Вызывается при создании меню Activity.
+     *
+     * @param menu Меню, в котором будут располагаться заданные элементы.
+     * @return Должен возвращаться true, чтоб меню отображалось.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_create_lesson, menu);
@@ -119,6 +215,14 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * Вызывается при выборе элемента меню.
+     *
+     * @param item Выбранный элемент меню.
+     *
+     * @return Верните false, чтобы разрешить нормальную обработку меню,
+     *         true, чтобы использовать ее здесь.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = getIntent();
@@ -165,7 +269,7 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
                         Toast.makeText(this, getString(R.string.please_fill_name_field), Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    Toast.makeText(this, getString(R.string.time_order_error_message), Toast.LENGTH_LONG).show();;
+                    Toast.makeText(this, getString(R.string.time_order_error_message), Toast.LENGTH_LONG).show();
                 }
                 break;
 
@@ -173,6 +277,9 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Вызывается при нажатии аппаратной кнопки "Назад".
+     */
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
@@ -181,6 +288,11 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         finish();
     }
 
+    /**
+     * Вызывается, когда View было нажато.
+     *
+     * @param v View, которое было нажато.
+     */
     @Override
     public void onClick(View v) {
         Intent intent;
@@ -212,6 +324,14 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
+    /**
+     * Вызывается, когда вызванное Activity завершает работу, давая requestCode, с которым оно
+     * было вызвано, resultCode и, возможно, дополнительные данные.
+     *
+     * @param requestCode Код, с которым было вызвано Activity.
+     * @param resultCode Код, идентифицирующий результат работы дочернего Activity.
+     * @param data Intent, который может содержать результирующие данные.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -235,6 +355,12 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
+    /**
+     * Заполняет поля Activity начальными данными.
+     * Если Activity вызывалось для создания занятия, то поля будут содержать значения по умолчанию.
+     * Если Activity вызывалось для редактирования существующего занятия, то поля будут
+     * содержать информацию об этом занятии.
+     */
     private void fillFields() {
         Intent intent = getIntent();
         int requestCode = intent.getIntExtra("requestCode", 0);
@@ -285,6 +411,11 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
+    /**
+     * Проверяет время начала и конца занятия на последовательность.
+     *
+     * @return true, если время начала занятия раньше времени конца занятия.
+     */
     private boolean checkTime() {
         int hBegin = Integer.parseInt(hourBeginning.getText().toString());
         int hEnd = Integer.parseInt(hourEnding.getText().toString());
@@ -292,7 +423,7 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         if (hBegin == hEnd) {
             int mBegin = Integer.parseInt(minuteBeginning.getText().toString());
             int mEnd = Integer.parseInt(minuteEnding.getText().toString());
-            return  mBegin < mEnd;
+            return mBegin < mEnd;
         }
 
         return hBegin < hEnd;
