@@ -76,36 +76,42 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        Intent intent = getIntent();
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        if (titleField.getText().toString().trim().isEmpty()
+                && noteTextField.getText().toString().trim().isEmpty()) {
+            setResult(RESULT_CANCELED, intent);
+        } else {
+            if (titleField.getText().toString().trim().isEmpty()) {
+                values.put("title", new SimpleDateFormat("yyyy.MM.dd - HH:mm:ss", Locale.getDefault()).format(new Date()));
+            } else {
+                values.put("title", titleField.getText().toString());
+            }
+            values.put("noteText", noteTextField.getText().toString());
+            if (intent.getIntExtra("requestCode", 0) == REQUEST_CODE_EDIT_NOTE
+                    && intent.hasExtra("id")) {
+                database.update(getString(R.string.table_notes_name),
+                        values,
+                        "id = ?",
+                        new String[]{String.valueOf(intent.getIntExtra("id", 0))});
+            } else {
+                database.insert(getString(R.string.table_notes_name), null, values);
+            }
+            setResult(RESULT_OK, intent);
+        }
+        database.close();
+        dbHelper.close();
+        finish();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent intent = getIntent();
-                SQLiteDatabase database = dbHelper.getWritableDatabase();
-                ContentValues values = new ContentValues();
-                if (titleField.getText().toString().trim().isEmpty()
-                        && noteTextField.getText().toString().trim().isEmpty()) {
-                    setResult(RESULT_CANCELED, intent);
-                } else {
-                    if (titleField.getText().toString().trim().isEmpty()) {
-                        values.put("title", new SimpleDateFormat("yyyy.MM.dd - HH:mm:ss", Locale.getDefault()).format(new Date()));
-                    } else {
-                        values.put("title", titleField.getText().toString());
-                    }
-                    values.put("noteText", noteTextField.getText().toString());
-                    if (intent.getIntExtra("requestCode", 0) == REQUEST_CODE_EDIT_NOTE
-                            && intent.hasExtra("id")) {
-                        database.update(getString(R.string.table_notes_name),
-                                values,
-                                "id = ?",
-                                new String[]{String.valueOf(intent.getIntExtra("id", 0))});
-                    } else {
-                        database.insert(getString(R.string.table_notes_name), null, values);
-                    }
-                    setResult(RESULT_OK, intent);
-                }
-                database.close();
-                dbHelper.close();
-                finish();
+                onBackPressed();
                 break;
         }
         return super.onOptionsItemSelected(item);
