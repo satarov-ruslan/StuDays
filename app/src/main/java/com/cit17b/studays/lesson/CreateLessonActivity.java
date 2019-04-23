@@ -90,13 +90,13 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
     private TextView lessonType;
 
     /**
-     * Числовое представление череда недели, когда проходит занятие.
+     * Числовое представление очередности повторений, когда проходит занятие.
      * 0 - по нечетным, 1 - по четным, 2 - каждую неделю.
      */
     private int oddEvenWeekNumber;
 
     /**
-     * Поле череда недели.
+     * Поле очередности повторений.
      */
     private TextView oddEvenWeek;
 

@@ -13,33 +13,53 @@ import android.widget.TextView;
 
 import com.cit17b.studays.R;
 
+/**
+ * Класс представляет собой диалоговое меню выбора дня недели
+ * и очередности повторений занятия.
+ *
+ * @author Ruslan Satarov
+ * @version 1.0
+ */
 public class DayOfTheWeekDialog extends AppCompatActivity implements View.OnClickListener {
 
-    LinearLayout dayOfTheWeekLayout;
-    LinearLayout oddEvenWeekLayout;
+    /**
+     * Массив, содержащий в себе View с днями недели.
+     */
+    private View[] dayOfTheWeekViewArray;
 
-    View[] dayOfTheWeekViewArray;
-    View[] oddEvenWeekViewArray;
+    /**
+     * Массив, содержащий в себе View с очередностью повторений занятия.
+     */
+    private View[] oddEvenWeekViewArray;
 
-    Button submitButton;
+    /**
+     * Переменная, содержащая выбранный день недели в числовом виде.
+     */
+    private int dayOfTheWeekIdSelected;
 
-    String[] oddEvenWeekArray;
-    String[] dayOfTheWeekAbridgedArray;
+    /**
+     * Переменная, содержащая выбранную очередность повторения в числовом виде.
+     */
+    private int oddEvenWeekIdSelected;
 
-    int dayOfTheWeekIdSelected;
-    int oddEvenWeekIdSelected;
-
+    /**
+     * Вызывается при создании Activity.
+     *
+     * @param savedInstanceState Если Activity было заново инициализировано после того, как
+     *                           было закрыто, тогда этот Bundle содержит, которые он получил
+     *                           в onSaveInstanceState. В другом случае это null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_day_of_the_week_dialog);
 
-        oddEvenWeekArray = getResources().getStringArray(R.array.odd_even_week);
-        dayOfTheWeekAbridgedArray = getResources().getStringArray(R.array.days_of_the_week_abridged);
+        String[] oddEvenWeekArray = getResources().getStringArray(R.array.odd_even_week);
+        String[] dayOfTheWeekAbridgedArray = getResources().getStringArray(R.array.days_of_the_week_abridged);
 
-        dayOfTheWeekLayout = findViewById(R.id.dayOfTheWeekLayout);
-        oddEvenWeekLayout = findViewById(R.id.oddEvenWeekLayout);
-        submitButton = findViewById(R.id.dayOfTheWeekSubmitButton);
+        LinearLayout dayOfTheWeekLayout = findViewById(R.id.dayOfTheWeekLayout);
+        LinearLayout oddEvenWeekLayout = findViewById(R.id.oddEvenWeekLayout);
+        Button submitButton = findViewById(R.id.dayOfTheWeekSubmitButton);
 
         submitButton.setOnClickListener(this);
 
@@ -67,6 +87,11 @@ public class DayOfTheWeekDialog extends AppCompatActivity implements View.OnClic
         oddEvenWeekIdSelected = -1;
     }
 
+    /**
+     * Вызывается, когда View было нажато.
+     *
+     * @param v View, которое было нажато.
+     */
     @Override
     public void onClick(View v) {
         int id = v.getId();

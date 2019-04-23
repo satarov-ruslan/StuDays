@@ -2,50 +2,84 @@ package com.cit17b.studays.lesson;
 
 import java.io.Serializable;
 
+/**
+ * Класс представляет собой воплощение сущности "Занятие".
+ *
+ * @author Ruslan Satarov
+ * @version 1.1
+ */
 public class Lesson implements Serializable {
 
-    /** По нечетным неделям */
+    /**
+     * По нечетным неделям.
+     * */
     public static final int ODD_WEEK = 0;
 
-    /** По четным неделям */
+    /**
+     * По четным неделям.
+     *  */
     public static final int EVEN_WEEK = 1;
 
-    /** По четным и нечетным неделям */
+    /**
+     * По четным и нечетным неделям.
+     *  */
     public static final int BOTH_WEEKS = 2;
 
     ////////////////////////////////////////////////
 
-    /** ID предмета (генерируется автоматически) */
+    /**
+     * ID предмета.
+     * */
     private int id;
 
-    /** Название */
+    /**
+     * Название.
+     * */
     private String name;
 
-    /** Аудитория */
+    /**
+     * Аудитория.
+     * */
     private String lectureHall;
 
-    /** Часы начала */
+    /**
+     * Часы начала.
+     * */
     private int hourBeginning;
 
-    /** Минуты начала */
+    /**
+     * Минуты начала.
+     * */
     private int minuteBeginning;
 
-    /** Часы конца */
+    /**
+     * Часы конца.
+     * */
     private int hourEnding;
 
-    /** Минуты конца */
+    /**
+     * Минуты конца.
+     * */
     private int minuteEnding;
 
-    /** Преподаватель */
+    /**
+     * Преподаватель.
+     * */
     private String lecturer;
 
-    /** Вид занятия (лекция, практика и т.д.) */
+    /**
+     * Вид занятия (лекция, практика и т.д.).
+     * */
     private String lessonType;
 
-    /** День недели */
+    /**
+     * День недели (0 - Понедельний, ..., 6 - Воскресенье).
+     * */
     private int dayOfTheWeek;
 
-    /** Четная/нечетная неделя */
+    /**
+     * Четная/нечетная неделя.
+     * */
     private int oddEvenWeek;
 
     public Lesson() {

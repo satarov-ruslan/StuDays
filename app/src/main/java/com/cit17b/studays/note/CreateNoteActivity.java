@@ -21,18 +21,50 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Этот класс представляет из себя Activity, что отвечает за создание и редактирование
+ * заметки.
+ *
+ * @author Ruslan Satarov
+ * @version 1.1
+ * */
 public class CreateNoteActivity extends AppCompatActivity implements View.OnClickListener {
 
+    /**
+     * Параметры используются при вызове данного Activity из других классов.
+     * Параметры позволяют указать цель вызова Activity и на основе этого
+     * задать начальное состояние полей Activity.
+     * */
     public static final int REQUEST_CODE_CREATE_NOTE = 15001;
     public static final int REQUEST_CODE_EDIT_NOTE = 15002;
 
-    EditText titleField;
-    EditText noteTextField;
+    /**
+     * Поле названия заметки.
+     */
+    private EditText titleField;
 
-    ImageButton deleteButton;
+    /**
+     * Поле текста заметки.
+     */
+    private EditText noteTextField;
 
-    DBHelper dbHelper;
+    /**
+     * Кнопка удаления заметки.
+     */
+    private ImageButton deleteButton;
 
+    /**
+     * Объект для работы с базой данных.
+     */
+    private DBHelper dbHelper;
+
+    /**
+     * Вызывается при создании Activity.
+     *
+     * @param savedInstanceState Если Activity было заново инициализировано после того, как
+     *                           было закрыто, тогда этот Bundle содержит, которые он получил
+     *                           в onSaveInstanceState. В другом случае это null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +75,12 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
 
     }
 
+    /**
+     * Вызывается при создании меню Activity.
+     *
+     * @param menu Меню, в котором будут располагаться заданные элементы.
+     * @return Должен возвращаться true, чтоб меню отображалось.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -58,6 +96,11 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * Вызывается, когда View было нажато.
+     *
+     * @param v View, которое было нажато.
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -78,6 +121,9 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    /**
+     * Вызывается при нажатии аппаратной кнопки "Назад".
+     */
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
@@ -110,6 +156,14 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
         finish();
     }
 
+    /**
+     * Вызывается при выборе элемента меню.
+     *
+     * @param item Выбранный элемент меню.
+     *
+     * @return Верните false, чтобы разрешить нормальную обработку меню,
+     *         true, чтобы использовать ее здесь.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -120,6 +174,10 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Если Activity было открыто для редактирования существующей заметки,
+     * то метод заполняет поля соответствующими значениями.
+     */
     private void fillFields() {
         Intent intent = getIntent();
         if (intent.getIntExtra("requestCode", 0) == REQUEST_CODE_EDIT_NOTE

@@ -11,28 +11,42 @@ import android.widget.TextView;
 
 import com.cit17b.studays.R;
 
+/**
+ * Класс представляет собой диалоговое меню выбора типа занятия.
+ *
+ * @author Ruslan Satarov
+ * @version 1.0
+ */
 public class LessonTypeDialog extends AppCompatActivity implements View.OnClickListener {
 
-    String[] lessonTypesArray;
+    /**
+     * Массив, содержащий View с типами занятия.
+     */
+    private View[] lessonTypeViewArray;
 
-    Button submitButton;
+    /**
+     * Переменная, хранящая id выбранного типа занятия.
+     */
+    private int idSelected;
 
-    LinearLayout lessonTypeList;
-    View[] lessonTypeViewArray;
-
-    int idSelected;
-
+    /**
+     * Вызывается при создании Activity.
+     *
+     * @param savedInstanceState Если Activity было заново инициализировано после того, как
+     *                           было закрыто, тогда этот Bundle содержит, которые он получил
+     *                           в onSaveInstanceState. В другом случае это null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lesson_type_dialog);
 
-        lessonTypeList = findViewById(R.id.lessonTypeList);
-        submitButton = findViewById(R.id.lessonTypeSubmitButton);
+        LinearLayout lessonTypeList = findViewById(R.id.lessonTypeList);
+        Button submitButton = findViewById(R.id.lessonTypeSubmitButton);
 
         submitButton.setOnClickListener(this);
 
-        lessonTypesArray = getResources().getStringArray(R.array.lesson_types);
+        String[] lessonTypesArray = getResources().getStringArray(R.array.lesson_types);
 
         lessonTypeViewArray = new View[lessonTypesArray.length];
         for (int i = 0; i < lessonTypeViewArray.length; i++) {
@@ -46,6 +60,11 @@ public class LessonTypeDialog extends AppCompatActivity implements View.OnClickL
         idSelected = -1;
     }
 
+    /**
+     * Вызывается, когда View было нажато.
+     *
+     * @param v View, которое было нажато.
+     */
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.lessonTypeSubmitButton) {

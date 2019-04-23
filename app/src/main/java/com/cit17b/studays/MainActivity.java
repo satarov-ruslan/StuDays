@@ -18,17 +18,54 @@ import com.cit17b.studays.note.NoteListActivity;
 
 import java.util.List;
 
+/**
+ * Этот класс является главным Activity, которое вызывается при запуске приложения.
+ * Класс отображает расписание занятий.
+ *
+ * @author Ruslan Satarov
+ * @version 1.2
+ */
 public class MainActivity extends FragmentActivity implements View.OnClickListener {
 
-    static final String LOG_TAG = "myLogs";
-    static final int PAGE_COUNT = 2;
+    /**
+     * Константа указывает количество отображаемых страниц расписания.
+     * Должна оставаться равной 2, так как расписание основано на системе
+     * четных-нечетных недель.
+     */
+    private static final int PAGE_COUNT = 2;
 
-    ViewPager timetablePager;
-    FragmentPagerAdapter pagerAdapter;
-    PagerTabStrip timetablePagerTabStrip;
-    FloatingActionButton createLessonButton;
-    FloatingActionButton noteButton;
+    /**
+     * Объект используется для отображения страниц расписания.
+     */
+    private ViewPager timetablePager;
 
+    /**
+     * Объект используется для генерации страниц для ViewPager.
+     */
+    private FragmentPagerAdapter pagerAdapter;
+
+    /**
+     * Полоса вкладок, позволяющая переключаться между страницами.
+     */
+    private PagerTabStrip timetablePagerTabStrip;
+
+    /**
+     * Кнопка вызова меню создания занятия.
+     */
+    private FloatingActionButton createLessonButton;
+
+    /**
+     * Кнопка, открывающая список заметок.
+     */
+    private FloatingActionButton noteButton;
+
+    /**
+     * Вызывается при создании Activity.
+     *
+     * @param savedInstanceState Если Activity было заново инициализировано после того, как
+     *                           было закрыто, тогда этот Bundle содержит, которые он получил
+     *                           в onSaveInstanceState. В другом случае это null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +85,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         noteButton.setOnClickListener(this);
     }
 
+    /**
+     * Вызывается, когда View было нажато.
+     *
+     * @param v View, которое было нажато.
+     */
     @Override
     public void onClick(View v) {
         Intent intent;
@@ -64,6 +106,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
+    /**
+     * Вызывается, когда вызванное Activity завершает работу, давая requestCode, с которым оно
+     * было вызвано, resultCode и, возможно, дополнительные данные.
+     *
+     * @param requestCode Код, с которым было вызвано Activity.
+     * @param resultCode Код, идентифицирующий результат работы дочернего Activity.
+     * @param data Intent, который может содержать результирующие данные.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -79,15 +129,34 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
+    /**
+     * Класс, представляющий собственную реализацию абстрактного класса FragmentPagerAdapter.
+     * Используется для генерации страниц расписания.
+     */
     private class TimetableFragmentPagerAdapter extends FragmentPagerAdapter {
 
+        /**
+         * Массив с заголовками страниц.
+         */
         String[] titles = getResources().getStringArray(R.array.timetable_week_labels);
 
+        /**
+         * Конструктор, принимающий FragmentManager.
+         *
+         * @param fm FragmentManager.
+         */
         public TimetableFragmentPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
 
+        /**
+         * Возвращает заговолок страницы по ее номеру в списке.
+         *
+         * @param position Номер страницы в списке.
+         *
+         * @return Заголовок страницы.
+         */
         @Nullable
         @Override
         public CharSequence getPageTitle(int position) {
@@ -97,11 +166,23 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             return super.getPageTitle(position);
         }
 
+        /**
+         * Возвращает Fragment-страницу по ее номеру в списке.
+         *
+         * @param position Номер страницы в списке.
+         *
+         * @return Fragment-страница.
+         */
         @Override
         public Fragment getItem(int position) {
             return TimetablePageFragment.newInstance(position);
         }
 
+        /**
+         * Возвращает количество страниц в списке.
+         *
+         * @return Количество страниц в списке.
+         */
         @Override
         public int getCount() {
             return PAGE_COUNT;

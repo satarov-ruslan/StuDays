@@ -1,11 +1,26 @@
 package com.cit17b.studays.note;
 
+/**
+ * Класс представляет собой воплощение сущности "Заметка".
+ *
+ * @author Ruslan Satarov
+ * @version 1.0
+ */
 public class Note {
 
+    /**
+     * ID заметки.
+     */
     private int id;
 
+    /**
+     * Название.
+     */
     private String title;
 
+    /**
+     * Текст.
+     */
     private String noteText;
 
     public Note() {
