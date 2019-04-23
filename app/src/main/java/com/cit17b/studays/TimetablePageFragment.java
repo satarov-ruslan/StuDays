@@ -43,7 +43,7 @@ public class TimetablePageFragment extends Fragment {
 
     String[] daysOfTheWeekLabels;
 
-    int lessonIdSelected;
+    static int lessonIdSelected;
 
     DBHelper dbHelper;
 
@@ -87,6 +87,7 @@ public class TimetablePageFragment extends Fragment {
         menu.add(0, CONTEXT_MENU_EDIT, 0, getString(R.string.edit));
         menu.add(0, CONTEXT_MENU_DELETE, 0, getString(R.string.delete));
         lessonIdSelected = v.getId();
+        Log.d("TESTTESTTEST", "onCreateContextMenu : id selected = " + lessonIdSelected);
     }
 
     @Override
@@ -95,11 +96,13 @@ public class TimetablePageFragment extends Fragment {
             case CONTEXT_MENU_EDIT:
                 Intent intent = new Intent(getContext(), CreateLessonActivity.class);
                 intent.putExtra("requestCode", CreateLessonActivity.REQUEST_CODE_EDIT_LESSON);
+
+                Log.d("TESTTESTTEST", "onContextItemSelected : id selected = " + lessonIdSelected);
                 intent.putExtra("id", lessonIdSelected);
 
                 startActivityForResult(intent, CreateLessonActivity.REQUEST_CODE_EDIT_LESSON);
                 return true;
-                //break;
+            //break;
             case CONTEXT_MENU_DELETE:
                 SQLiteDatabase database = dbHelper.getWritableDatabase();
                 database.delete(getString(R.string.table_lessons_name), "id = ?", new String[]{String.valueOf(lessonIdSelected)});
@@ -110,7 +113,7 @@ public class TimetablePageFragment extends Fragment {
                 }
                 fillDataListFromDB();
                 fillLessonList();
-            break;
+                break;
         }
         return super.onContextItemSelected(item);
     }

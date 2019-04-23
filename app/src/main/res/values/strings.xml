@@ -2,8 +2,8 @@
     <string name="app_name">StuDays</string>
     <string name="db_name">studaysDB</string>
     <string name="db_log_tag">DB_LOG</string>
-    <string name="create_table_lessons_sql">CREATE TABLE IF NOT EXISTS lessons(id INTEGER PRIMARY KEY, name text, lectureHall text, hourBeginning int, minuteBeginning int, hourEnding int, minuteEnding int, lecturer text, lessonType text, dayOfTheWeek int, oddEvenWeek int);</string>
-    <string name="create_table_notes_sql">CREATE TABLE IF NOT EXISTS notes(id INTEGER primary KEY AUTOINCREMENT, title text, noteText text);</string>
+    <string name="create_table_lessons_sql">CREATE TABLE IF NOT EXISTS lessons(id INTEGER PRIMARY KEY AUTOINCREMENT, name text, lectureHall text, hourBeginning int, minuteBeginning int, hourEnding int, minuteEnding int, lecturer text, lessonType text, dayOfTheWeek int, oddEvenWeek int);</string>
+    <string name="create_table_notes_sql">CREATE TABLE IF NOT EXISTS notes(id INTEGER PRIMARY KEY AUTOINCREMENT, title text, noteText text);</string>
     <string name="table_lessons_name">lessons</string>
     <string name="table_notes_name">notes</string>
     <string name="lesson">Предмет</string>

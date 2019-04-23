@@ -124,8 +124,7 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         Intent intent = getIntent();
         switch (item.getItemId()) {
             case android.R.id.home:
-                setResult(RESULT_CANCELED, intent);
-                finish();
+                onBackPressed();
                 break;
             case R.id.createLessonSubmitButton:
                 if (checkTime()) {
@@ -153,8 +152,6 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
                                     new String[]{String.valueOf(intent.getIntExtra("id", 0))});
                             Log.d(getString(R.string.db_log_tag), "row updated, ID = " + rowID);
                         } else {
-                            int generatedId = (int) (Math.random() * Integer.MAX_VALUE);
-                            values.put("id", generatedId);
                             long rowID = database.insert(getString(R.string.table_lessons_name), null, values);
                             Log.d(getString(R.string.db_log_tag), "row inserted, ID = " + rowID);
                         }
@@ -174,6 +171,14 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        Intent intent = getIntent();
+        setResult(RESULT_CANCELED, intent);
+        finish();
     }
 
     @Override
