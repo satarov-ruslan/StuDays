@@ -128,7 +128,7 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
                 break;
             case R.id.createLessonSubmitButton:
                 if (checkTime()) {
-                    if (checkInputFields()) {
+                    if (!name.getText().toString().trim().isEmpty()) {
                         SQLiteDatabase database = dbHelper.getWritableDatabase();
                         ContentValues values = new ContentValues();
 
@@ -162,7 +162,7 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
                         setResult(RESULT_OK, intent);
                         finish();
                     } else {
-                        Toast.makeText(this, getString(R.string.please_fill_all_fields), Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, getString(R.string.please_fill_name_field), Toast.LENGTH_LONG).show();
                     }
                 } else {
                     Toast.makeText(this, getString(R.string.time_order_error_message), Toast.LENGTH_LONG).show();;
@@ -296,11 +296,5 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         }
 
         return hBegin < hEnd;
-    }
-
-    private boolean checkInputFields() {
-        return !(name.getText().toString().trim().isEmpty()
-                || lecturer.getText().toString().trim().isEmpty()
-                || lectureHall.getText().toString().trim().isEmpty());
     }
 }

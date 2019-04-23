@@ -70,6 +70,6 @@
     <string name="lesson_beginning_minute_default">00</string>
     <string name="lesson_ending_hour_default">09</string>
     <string name="lesson_ending_minute_default">30</string>
-    <string name="please_fill_all_fields">Пожалуйста, заполните все поля</string>
+    <string name="please_fill_name_field">Заполните поле "Предмет"</string>
     <string name="time_order_error_message">Начало занятия не должно быть позже его окончания</string>
 </resources>
