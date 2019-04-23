@@ -11,8 +11,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".NoteListActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".CreateNoteActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NoteListActivity"
+            android:label="@string/notes"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".DayOfTheWeekDialog"
             android:label="@string/day_of_the_week"

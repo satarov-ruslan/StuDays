@@ -23,6 +23,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     ViewPager timetablePager;
     FragmentPagerAdapter pagerAdapter;
     PagerTabStrip timetablePagerTabStrip;
+    FloatingActionButton createLessonButton;
+    FloatingActionButton noteButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,37 +38,25 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         timetablePagerTabStrip.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
 
-        FloatingActionButton createLessonButton = findViewById(R.id.createLessonButton);
+        createLessonButton = findViewById(R.id.createLessonButton);
         createLessonButton.setOnClickListener(this);
 
-
-        /*
-        timetablePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int i, float v, int i1) {
-
-            }
-
-            @Override
-            public void onPageSelected(int i) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int i) {
-
-            }
-        });
-        */
+        noteButton = findViewById(R.id.noteButton);
+        noteButton.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
+        Intent intent;
         switch (v.getId()) {
             case R.id.createLessonButton:
-                Intent intent = new Intent(this, CreateLessonActivity.class);
+                intent = new Intent(this, CreateLessonActivity.class);
                 intent.putExtra("requestCode", CreateLessonActivity.REQUEST_CODE_CREATE_LESSON);
                 startActivityForResult(intent, CreateLessonActivity.REQUEST_CODE_CREATE_LESSON);
+                break;
+            case R.id.noteButton:
+                intent = new Intent(this, NoteListActivity.class);
+                startActivity(intent);
                 break;
         }
     }

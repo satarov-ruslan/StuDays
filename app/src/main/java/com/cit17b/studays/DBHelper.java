@@ -11,8 +11,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private Context context;
 
+    private static final int DATABASE_VERSION = 2;
+
     public DBHelper(Context context) {
-        super(context, context.getString(R.string.db_name), null, 1);
+        super(context, context.getString(R.string.db_name), null, DATABASE_VERSION);
         this.context = context;
         logTag = context.getString(R.string.db_log_tag);
     }
@@ -20,7 +22,13 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(logTag, "onCreate database");
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
         db.execSQL(context.getString(R.string.create_table_lessons_sql));
+        db.execSQL(context.getString(R.string.create_table_notes_sql));
+        super.onOpen(db);
     }
 
     @Override

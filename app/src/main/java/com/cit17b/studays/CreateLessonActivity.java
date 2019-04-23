@@ -114,7 +114,7 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.create_lesson_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_create_lesson, menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         return super.onCreateOptionsMenu(menu);
     }
@@ -269,6 +269,8 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
 
                 cursor.close();
             }
+            database.close();
+            dbHelper.close();
         } else {
             lessonType.setText(lessonTypesArray[0]);
             oddEvenWeekNumber = 2;

@@ -21,19 +21,6 @@
     </android.support.v4.view.ViewPager>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/createLessonButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="30dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:src="@drawable/ic_add_while_24dp"
-        app:backgroundTint="@color/colorPrimary" />
-
-    <android.support.design.widget.FloatingActionButton
         android:id="@+id/noteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -46,5 +33,18 @@
         android:focusable="true"
         android:src="@drawable/ic_bookmark_white_24dp"
         app:backgroundTint="@android:color/holo_blue_dark" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/createLessonButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="30dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_add_while_24dp"
+        app:backgroundTint="@color/colorPrimary" />
 
 </RelativeLayout>

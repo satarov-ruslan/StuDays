@@ -35,7 +35,7 @@ public class TimetablePageFragment extends Fragment {
      */
     int pageNumber;
 
-    ArrayList<Lesson> lessons;
+    ArrayList<Lesson> dataList;
 
     LinearLayout lessonList;
 
@@ -62,13 +62,13 @@ public class TimetablePageFragment extends Fragment {
         Log.d(TIMETABLE_PAGE_FRAGMENT_LOG, "pageNumber = " + pageNumber);
         dbHelper = new DBHelper(getContext());
 
-        lessons = new ArrayList<>();
+        dataList = new ArrayList<>();
         daysOfTheWeekLabels = getResources().getStringArray(R.array.days_of_the_week);
     }
 
     @Override
     public void onResume() {
-        fillDataArrayFromDB();
+        fillDataListFromDB();
         fillLessonList();
         super.onResume();
     }
@@ -108,7 +108,7 @@ public class TimetablePageFragment extends Fragment {
                 for (Fragment fragment : getFragmentManager().getFragments()) {
                     getFragmentManager().beginTransaction().detach(fragment).attach(fragment).commit();
                 }
-                fillDataArrayFromDB();
+                fillDataListFromDB();
                 fillLessonList();
             break;
         }
@@ -122,7 +122,7 @@ public class TimetablePageFragment extends Fragment {
             switch (requestCode) {
                 case CreateLessonActivity.REQUEST_CODE_CREATE_LESSON:
                 case CreateLessonActivity.REQUEST_CODE_EDIT_LESSON:
-                    fillDataArrayFromDB();
+                    fillDataListFromDB();
                     fillLessonList();
                     break;
             }
@@ -137,7 +137,7 @@ public class TimetablePageFragment extends Fragment {
         for (int i = 0; i < daysOfTheWeekLayouts.length; i++) {
             ArrayList<Lesson> filteredByDayOfWeek = new ArrayList<>();
 
-            for (Lesson lesson : lessons) {
+            for (Lesson lesson : dataList) {
                 if (lesson.getOddEvenWeek() == pageNumber || lesson.getOddEvenWeek() == Lesson.BOTH_WEEKS) {
                     if (lesson.getDayOfTheWeek() == i) {
                         filteredByDayOfWeek.add(lesson);
@@ -177,8 +177,8 @@ public class TimetablePageFragment extends Fragment {
         }
     }
 
-    void fillDataArrayFromDB() {
-        lessons.clear();
+    void fillDataListFromDB() {
+        dataList.clear();
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         Cursor cursor = database.query(getString(R.string.table_lessons_name), null, null, null, null, null, null);
@@ -211,7 +211,7 @@ public class TimetablePageFragment extends Fragment {
                 lesson.setDayOfTheWeek(cursor.getInt(dayOfTheWeekColIndex));
                 lesson.setOddEvenWeek(cursor.getInt(oddEvenWeekColIndex));
 
-                lessons.add(lesson);
+                dataList.add(lesson);
             } while (cursor.moveToNext());
         }
 
