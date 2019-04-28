@@ -21,7 +21,7 @@
             android:layout_weight="1"
             android:ems="10"
             android:hint="@string/lesson"
-            android:inputType="text"
+            android:inputType="text|textCapSentences"
             android:textSize="22sp" />
 
         <EditText
@@ -34,7 +34,7 @@
             android:layout_weight="1"
             android:ems="10"
             android:hint="@string/lecturer"
-            android:inputType="text"
+            android:inputType="text|textCapSentences"
             android:textSize="22sp" />
 
         <EditText
@@ -47,7 +47,7 @@
             android:layout_weight="1"
             android:ems="10"
             android:hint="@string/lecture_hall"
-            android:inputType="text"
+            android:inputType="text|textCapSentences"
             android:textSize="22sp" />
 
         <RelativeLayout

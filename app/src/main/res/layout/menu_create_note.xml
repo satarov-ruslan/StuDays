@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:hint="@string/note_title_hint"
-        android:inputType="textNoSuggestions|text"
+        android:inputType="textNoSuggestions|text|textCapSentences"
         android:singleLine="true"
         android:theme="@style/NoteTextFieldStyle"
         tools:ignore="Autofill" />
@@ -20,7 +20,7 @@
         android:id="@+id/createNoteDeleteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/save"
         android:backgroundTint="@color/colorPrimary"
+        android:contentDescription="@string/save"
         android:src="@drawable/ic_delete_white_24dp" />
 </LinearLayout>

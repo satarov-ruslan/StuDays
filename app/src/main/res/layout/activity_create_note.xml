@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <EditText
         android:id="@+id/createNoteTextField"
         android:layout_width="0dp"
@@ -14,13 +15,13 @@
         android:layout_marginBottom="8dp"
         android:ems="10"
         android:gravity="top"
-        android:theme="@style/NoteTextFieldStyle"
         android:hint="@string/input_text_hint"
-        android:inputType="textLongMessage|textMultiLine"
+        android:inputType="textLongMessage|textMultiLine|textCapSentences"
         android:singleLine="false"
+        android:theme="@style/NoteTextFieldStyle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="Autofill"/>
+        tools:ignore="Autofill" />
 </android.support.constraint.ConstraintLayout>
