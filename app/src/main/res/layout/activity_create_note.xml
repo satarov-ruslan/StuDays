@@ -18,7 +18,6 @@
         android:hint="@string/input_text_hint"
         android:inputType="textLongMessage|textMultiLine|textCapSentences"
         android:singleLine="false"
-        android:theme="@style/NoteTextFieldStyle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
