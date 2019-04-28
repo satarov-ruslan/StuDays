@@ -6,11 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".note.NoteListActivity">
 
-    <fragment
-        android:id="@+id/noteList"
-        android:name="com.cit17b.studays.note.NoteList"
+    <com.baoyz.swipemenulistview.SwipeMenuListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:id="@+id/noteSwipeListView" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/createNoteButton"
