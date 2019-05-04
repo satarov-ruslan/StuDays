@@ -1,149 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tvLessonPositionInList"
-        android:layout_width="16dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:gravity="end"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="1" />
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/lessonItemConstraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/dot"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/tvLessonPositionInList"
-        app:layout_constraintTop_toTopOf="@+id/tvLessonPositionInList" />
+        <TextView
+            android:id="@+id/tvLessonMinuteEnding"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/textView3"
+            app:layout_constraintTop_toTopOf="@+id/textView3"
+            tools:text="05" />
 
-    <TextView
-        android:id="@+id/tvLessonName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="@+id/tvLessonPositionInList"
-        tools:text="Lesson Name" />
+        <TextView
+            android:id="@+id/tvLessonLectureHall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="end"
+            android:singleLine="false"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/tvLessonName"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="tueioj pturiefjdk utrjlfpoti;gjf" />
 
-    <TextView
-        android:id="@+id/tvLessonLectureHall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Lecture Hall" />
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/colon"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/tvLessonHourEnding"
+            app:layout_constraintTop_toTopOf="@+id/tvLessonHourEnding" />
 
-    <TextView
-        android:id="@+id/tvLessonHourBeginning"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/tvLessonName"
-        app:layout_constraintTop_toBottomOf="@+id/tvLessonName"
-        tools:text="8" />
+        <TextView
+            android:id="@+id/tvLessonName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:singleLine="false"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@+id/tvLessonLectureHall"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/textView"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="asdf lasdk;fj;lk j;adshgldjh gkldfshjg ldfhjldjfs" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/colon"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/tvLessonHourBeginning"
-        app:layout_constraintTop_toTopOf="@+id/tvLessonHourBeginning"
-        tools:text="@string/colon" />
+        <TextView
+            android:id="@+id/tvLessonType"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:singleLine="false"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@+id/tvLessonLecturer"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/tvLessonName"
+            app:layout_constraintTop_toBottomOf="@+id/tvLessonName"
+            tools:text="fucking shit i hate this please kill me i'm suffering" />
 
-    <TextView
-        android:id="@+id/tvLessonMinuteBeginning"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/textView2"
-        app:layout_constraintTop_toTopOf="@+id/textView2"
-        tools:text="30" />
+        <TextView
+            android:id="@+id/tvLessonLecturer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="end"
+            android:singleLine="false"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/tvLessonType"
+            app:layout_constraintTop_toBottomOf="@+id/tvLessonLectureHall"
+            tools:text="hgfds ukljk ytfgsd yglhkj tyhdf ygihlkj fdgfsdgdh" />
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:text="@string/dash"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/tvLessonMinuteBeginning"
-        app:layout_constraintTop_toTopOf="@+id/tvLessonMinuteBeginning"
-        tools:text="@string/dash" />
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="@string/dash"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/tvLessonMinuteBeginning"
+            app:layout_constraintTop_toTopOf="@+id/tvLessonMinuteBeginning"
+            tools:text="@string/dash" />
 
-    <TextView
-        android:id="@+id/tvLessonHourEnding"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/textView4"
-        app:layout_constraintTop_toTopOf="@+id/textView4"
-        tools:text="10" />
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/colon"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/tvLessonHourBeginning"
+            app:layout_constraintTop_toTopOf="@+id/tvLessonHourBeginning"
+            tools:text="@string/colon" />
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/colon"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/tvLessonHourEnding"
-        app:layout_constraintTop_toTopOf="@+id/tvLessonHourEnding" />
+        <TextView
+            android:id="@+id/tvLessonMinuteBeginning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
+            app:layout_constraintTop_toTopOf="@+id/textView2"
+            tools:text="30" />
 
-    <TextView
-        android:id="@+id/tvLessonMinuteEnding"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/textView3"
-        app:layout_constraintTop_toTopOf="@+id/textView3"
-        tools:text="05" />
+        <TextView
+            android:id="@+id/tvLessonHourEnding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/textView4"
+            app:layout_constraintTop_toTopOf="@+id/textView4"
+            tools:text="10" />
 
-    <TextView
-        android:id="@+id/tvLessonType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/tvLessonHourBeginning"
-        app:layout_constraintTop_toBottomOf="@+id/tvLessonHourBeginning"
-        tools:text="Lection" />
+        <TextView
+            android:id="@+id/tvLessonPositionInList"
+            android:layout_width="16dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:gravity="end"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="1" />
 
-    <TextView
-        android:id="@+id/tvLessonLecturer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="@+id/tvLessonLectureHall"
-        app:layout_constraintTop_toBottomOf="@+id/tvLessonLectureHall"
-        tools:text="Lecturer Name" />
+        <TextView
+            android:id="@+id/tvLessonHourBeginning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="@+id/tvLessonType"
+            app:layout_constraintTop_toBottomOf="@+id/tvLessonType"
+            tools:text="8" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dot"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/tvLessonPositionInList"
+            app:layout_constraintTop_toTopOf="@+id/tvLessonPositionInList" />
+
+    </android.support.constraint.ConstraintLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_below="@+id/lessonItemConstraintLayout"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:background="@android:color/darker_gray"
-        app:layout_constraintEnd_toEndOf="@+id/tvLessonLectureHall"
-        app:layout_constraintStart_toStartOf="@+id/tvLessonPositionInList"
-        app:layout_constraintTop_toBottomOf="@+id/tvLessonType" />
-</android.support.constraint.ConstraintLayout>
+        android:background="@android:color/darker_gray" />
+
+</RelativeLayout>
