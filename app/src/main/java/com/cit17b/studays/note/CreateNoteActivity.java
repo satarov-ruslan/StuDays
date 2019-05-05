@@ -1,9 +1,17 @@
 package com.cit17b.studays.note;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +21,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.cit17b.studays.DBHelper;
 import com.cit17b.studays.R;
@@ -27,14 +37,14 @@ import java.util.Locale;
  *
  * @author Ruslan Satarov
  * @version 1.1
- * */
-public class CreateNoteActivity extends AppCompatActivity implements View.OnClickListener {
+ */
+public class CreateNoteActivity extends AppCompatActivity implements View.OnClickListener, NotificationDialogFragment.NotificationDialogListener {
 
     /**
      * Параметры используются при вызове данного Activity из других классов.
      * Параметры позволяют указать цель вызова Activity и на основе этого
      * задать начальное состояние полей Activity.
-     * */
+     */
     public static final int REQUEST_CODE_CREATE_NOTE = 15001;
     public static final int REQUEST_CODE_EDIT_NOTE = 15002;
 
@@ -47,6 +57,8 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
      * Поле текста заметки.
      */
     private EditText noteTextField;
+
+    private long notificationDateTime;
 
     /**
      * Кнопка удаления заметки.
@@ -92,6 +104,9 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
         deleteButton = getSupportActionBar().getCustomView().findViewById(R.id.createNoteDeleteButton);
         deleteButton.setOnClickListener(this);
 
+        ImageButton notificationButton = getSupportActionBar().getCustomView().findViewById(R.id.createNoteNotificationButton);
+        notificationButton.setOnClickListener(this);
+
         fillFields();
         return super.onCreateOptionsMenu(menu);
     }
@@ -114,9 +129,23 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
                 } else {
                     setResult(RESULT_CANCELED, intent);
                 }
+
+                if (notificationDateTime != 0 || notificationDateTime > System.currentTimeMillis()) {
+                    Cursor cursor = database.rawQuery("SELECT MAX(id) FROM " + getString(R.string.table_notes_name), null);
+                    if (cursor.getColumnCount() != 0) {
+                        cursor.moveToFirst();
+                        int lastNoteId = cursor.getInt(0);
+                        cursor.close();
+                        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(lastNoteId);
+                    }
+                }
+
                 database.close();
                 dbHelper.close();
                 finish();
+                break;
+            case R.id.createNoteNotificationButton:
+                NotificationDialogFragment.newInstance(getString(R.string.notification), notificationDateTime).show(getSupportFragmentManager(), "notificationDialog");
                 break;
         }
     }
@@ -142,27 +171,55 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
             values.put("noteText", noteTextField.getText().toString());
             if (intent.getIntExtra("requestCode", 0) == REQUEST_CODE_EDIT_NOTE
                     && intent.hasExtra("id")) {
+                int id = intent.getIntExtra("id", 0);
                 database.update(getString(R.string.table_notes_name),
                         values,
                         "id = ?",
-                        new String[]{String.valueOf(intent.getIntExtra("id", 0))});
+                        new String[]{String.valueOf(id)});
+
+                if (notificationDateTime != 0 || notificationDateTime > System.currentTimeMillis()) {
+                    createNoteNotification(id);
+                }
             } else {
                 database.insert(getString(R.string.table_notes_name), null, values);
             }
+
+            if (notificationDateTime != 0 || notificationDateTime > System.currentTimeMillis()) {
+                Cursor cursor = database.rawQuery("SELECT MAX(id) FROM notes", null);
+                cursor.moveToFirst();
+                int lastNoteId = cursor.getInt(0);
+                cursor.close();
+                createNoteNotification(lastNoteId);
+            } else {
+                ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancelAll();
+            }
+
             setResult(RESULT_OK, intent);
         }
+
         database.close();
         dbHelper.close();
         finish();
+    }
+
+    private void createNoteNotification(int noteId) {
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        intent.putExtra("id", noteId);
+        intent.putExtra("dateTime", notificationDateTime);
+        intent.putExtra("title", titleField.getText().toString());
+        intent.putExtra("text", noteTextField.getText().toString());
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, noteId, intent, 0);
+        alarmManager.setExact(AlarmManager.RTC, notificationDateTime, alarmIntent);
     }
 
     /**
      * Вызывается при выборе элемента меню.
      *
      * @param item Выбранный элемент меню.
-     *
      * @return Верните false, чтобы разрешить нормальную обработку меню,
-     *         true, чтобы использовать ее здесь.
+     * true, чтобы использовать ее здесь.
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -192,7 +249,6 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
                     int titleColIndex = cursor.getColumnIndex("title");
                     int noteTextColIndex = cursor.getColumnIndex("noteText");
 
-                    Log.d("TESTTESTTEST", "TITLE FIELD = " + cursor.getString(titleColIndex));
                     titleField.setText(cursor.getString(titleColIndex));
                     noteTextField.setText(cursor.getString(noteTextColIndex));
                 }
@@ -200,6 +256,39 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
             }
             database.close();
             dbHelper.close();
+        }
+    }
+
+    @Override
+    public void onFinishNotificationDialog(long input) {
+        notificationDateTime = input;
+        //String str = new SimpleDateFormat("yyyy.MM.dd - hh:mm.ss", Locale.getDefault()).format(new Date(notificationDateTime));
+        //Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+    }
+
+    public static class AlarmReceiver extends BroadcastReceiver {
+        public AlarmReceiver() {
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int id = intent.getIntExtra("id", 0);
+            long dateTime = intent.getLongExtra("dateTime", 0);
+            String title = intent.getStringExtra("title");
+            String text = intent.getStringExtra("text");
+            Intent deleteIntent = new Intent(context, DeleteNoteService.class);
+            deleteIntent.putExtra("id", id);
+            deleteIntent.setAction(DeleteNoteService.ACTION_DELETE_NOTE);
+            PendingIntent deletePendingIntent = PendingIntent.getService(context, id, deleteIntent, 0);
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, context.getString(R.string.notification_channel_id))
+                    .setSmallIcon(R.drawable.ic_stat_name)
+                    .setContentTitle(title)
+                    .setContentText(text)
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                    .setWhen(dateTime)
+                    .addAction(R.drawable.ic_delete_white_24dp, context.getString(R.string.delete), deletePendingIntent);
+            ((NotificationManager) context.getSystemService(NOTIFICATION_SERVICE)).notify(id, builder.build());
         }
     }
 }

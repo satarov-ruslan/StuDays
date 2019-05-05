@@ -1,5 +1,9 @@
 package com.cit17b.studays.note;
 
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -98,9 +102,19 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
                 database.delete(getString(R.string.table_notes_name), null, null);
                 database.close();
                 dbHelper.close();
+                deleteAllNotifications();
                 updateList();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void deleteAllNotifications() {
+        Intent intent = new Intent(this, DeleteNoteService.class);
+        for (Note note : dataList) {
+            PendingIntent pendingIntent = PendingIntent.getService(this, note.getId(), intent, 0);
+            ((AlarmManager)getSystemService(Context.ALARM_SERVICE)).cancel(pendingIntent);
+        }
+        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancelAll();
     }
 
     /**
@@ -130,7 +144,7 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK || requestCode == RESULT_CANCELED) {
             updateList();
         }
     }
@@ -183,6 +197,7 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
                     database.delete(getString(R.string.table_notes_name), "id = ?", new String[]{String.valueOf(dataList.get(position).getId())});
                     database.close();
                     dbHelper.close();
+                    ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(dataList.get(position).getId());
                     updateList();
                 }
             }

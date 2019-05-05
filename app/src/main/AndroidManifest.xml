@@ -11,6 +11,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <service
+            android:name=".note.DeleteNoteService"
+            android:exported="false"></service>
+        <receiver android:name=".note.CreateNoteActivity$AlarmReceiver"/>
+
         <activity
             android:name=".note.CreateNoteActivity"
             android:screenOrientation="portrait" />
