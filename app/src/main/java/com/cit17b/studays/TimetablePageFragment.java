@@ -23,6 +23,7 @@ import com.cit17b.studays.lesson.CreateLessonActivity;
 import com.cit17b.studays.lesson.Lesson;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Locale;
 
@@ -269,6 +270,23 @@ public class TimetablePageFragment extends Fragment {
                     lessonItem.setId(lesson.getId());
                     fillLessonItem(lessonItem, lesson, j + 1);
                     registerForContextMenu(lessonItem);
+
+                    Calendar currentTime = Calendar.getInstance();
+                    int dayOfWeek = currentTime.get(Calendar.DAY_OF_WEEK) - 2;
+                    if (dayOfWeek < 0) dayOfWeek = 6;
+                    Calendar lessonBeginning = Calendar.getInstance();
+                    lessonBeginning.set(Calendar.HOUR_OF_DAY, lesson.getHourBeginning());
+                    lessonBeginning.set(Calendar.MINUTE, lesson.getMinuteBeginning());
+                    Calendar lessonEnding = Calendar.getInstance();
+                    lessonEnding.set(Calendar.HOUR_OF_DAY, lesson.getHourEnding());
+                    lessonEnding.set(Calendar.MINUTE, lesson.getMinuteEnding());
+
+                    if (dayOfWeek == lesson.getDayOfTheWeek()
+                            && currentTime.compareTo(lessonBeginning) > 0
+                            && currentTime.compareTo(lessonEnding) < 0) {
+                        lessonItem.setBackgroundResource(android.R.color.holo_blue_light);
+                    }
+
                     daysOfTheWeekLayouts[i].addView(lessonItem);
                 }
 
