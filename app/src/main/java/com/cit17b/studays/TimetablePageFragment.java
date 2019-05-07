@@ -1,6 +1,8 @@
 package com.cit17b.studays;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -177,16 +179,27 @@ public class TimetablePageFragment extends Fragment {
                 return true;
             //break;
             case CONTEXT_MENU_DELETE:
-                SQLiteDatabase database = dbHelper.getWritableDatabase();
-                database.delete(getString(R.string.table_lessons_name), "id = ?", new String[]{String.valueOf(lessonIdSelected)});
-                database.close();
-                dbHelper.close();
-                for (Fragment fragment : getFragmentManager().getFragments()) {
-                    getFragmentManager().beginTransaction().detach(fragment).attach(fragment).commit();
-                }
-                fillDataListFromDB();
-                fillLessonList();
-                break;
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle(R.string.question_delete_element);
+                builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SQLiteDatabase database = dbHelper.getWritableDatabase();
+                        database.delete(getString(R.string.table_lessons_name), "id = ?", new String[]{String.valueOf(lessonIdSelected)});
+                        database.close();
+                        dbHelper.close();
+                        if (getFragmentManager() != null) {
+                            for (Fragment fragment : getFragmentManager().getFragments()) {
+                                getFragmentManager().beginTransaction().detach(fragment).attach(fragment).commit();
+                            }
+                        }
+                        fillDataListFromDB();
+                        fillLessonList();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, null);
+                builder.create().show();
+                return true;
         }
         return super.onContextItemSelected(item);
     }

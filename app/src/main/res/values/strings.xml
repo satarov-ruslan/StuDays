@@ -19,6 +19,8 @@
     <string name="save">Сохранить</string>
     <string name="ok">OK</string>
     <string name="cancel">Отмена</string>
+    <string name="question_delete_element">Удалить элемент?</string>
+    <string name="question_delete_all">Удалить все?</string>
     <string name="notification">Уведомление</string>
     <string name="enable_notification">Включить уведомление</string>
     <string name="date">Дата</string>

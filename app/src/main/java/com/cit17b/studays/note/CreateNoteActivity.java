@@ -1,12 +1,14 @@
 package com.cit17b.studays.note;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -120,29 +122,38 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.createNoteDeleteButton:
-                Intent intent = getIntent();
-                SQLiteDatabase database = dbHelper.getWritableDatabase();
-                if (intent.getIntExtra("requestCode", 0) == REQUEST_CODE_EDIT_NOTE
-                        && intent.hasExtra("id")) {
-                    database.delete(getString(R.string.table_notes_name), "id = ?", new String[]{String.valueOf(intent.getIntExtra("id", 0))});
-                    setResult(RESULT_OK, intent);
-                } else {
-                    setResult(RESULT_CANCELED, intent);
-                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.question_delete_element);
+                builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = getIntent();
+                        SQLiteDatabase database = dbHelper.getWritableDatabase();
+                        if (intent.getIntExtra("requestCode", 0) == REQUEST_CODE_EDIT_NOTE
+                                && intent.hasExtra("id")) {
+                            database.delete(getString(R.string.table_notes_name), "id = ?", new String[]{String.valueOf(intent.getIntExtra("id", 0))});
+                            setResult(RESULT_OK, intent);
+                        } else {
+                            setResult(RESULT_CANCELED, intent);
+                        }
 
-                if (notificationDateTime != 0 || notificationDateTime > System.currentTimeMillis()) {
-                    Cursor cursor = database.rawQuery("SELECT MAX(id) FROM " + getString(R.string.table_notes_name), null);
-                    if (cursor.getColumnCount() != 0) {
-                        cursor.moveToFirst();
-                        int lastNoteId = cursor.getInt(0);
-                        cursor.close();
-                        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(lastNoteId);
+                        if (notificationDateTime != 0 || notificationDateTime > System.currentTimeMillis()) {
+                            Cursor cursor = database.rawQuery("SELECT MAX(id) FROM " + getString(R.string.table_notes_name), null);
+                            if (cursor.getColumnCount() != 0) {
+                                cursor.moveToFirst();
+                                int lastNoteId = cursor.getInt(0);
+                                cursor.close();
+                                ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(lastNoteId);
+                            }
+                        }
+
+                        database.close();
+                        dbHelper.close();
+                        finish();
                     }
-                }
-
-                database.close();
-                dbHelper.close();
-                finish();
+                });
+                builder.setNegativeButton(R.string.cancel, null);
+                builder.create().show();
                 break;
             case R.id.createNoteNotificationButton:
                 NotificationDialogFragment.newInstance(getString(R.string.notification), notificationDateTime).show(getSupportFragmentManager(), "notificationDialog");
@@ -203,7 +214,6 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void createNoteNotification(int noteId) {
-
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReceiver.class);
         intent.putExtra("id", noteId);

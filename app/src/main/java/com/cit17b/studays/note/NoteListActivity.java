@@ -4,11 +4,13 @@ import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -98,12 +100,21 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
                 finish();
                 break;
             case R.id.deleteAllNotesButton:
-                SQLiteDatabase database = dbHelper.getWritableDatabase();
-                database.delete(getString(R.string.table_notes_name), null, null);
-                database.close();
-                dbHelper.close();
-                deleteAllNotifications();
-                updateList();
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.question_delete_all);
+                builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SQLiteDatabase database = dbHelper.getWritableDatabase();
+                        database.delete(getString(R.string.table_notes_name), null, null);
+                        database.close();
+                        dbHelper.close();
+                        deleteAllNotifications();
+                        updateList();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, null);
+                builder.create().show();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -112,7 +123,7 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
         Intent intent = new Intent(this, DeleteNoteService.class);
         for (Note note : dataList) {
             PendingIntent pendingIntent = PendingIntent.getService(this, note.getId(), intent, 0);
-            ((AlarmManager)getSystemService(Context.ALARM_SERVICE)).cancel(pendingIntent);
+            ((AlarmManager) getSystemService(Context.ALARM_SERVICE)).cancel(pendingIntent);
         }
         ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancelAll();
     }
@@ -155,7 +166,7 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
      * @return Настроенный объект SwipeMenuListView.
      */
     private SwipeMenuListView getAdjustedSwipeMenuListView() {
-        SwipeMenuListView listView = findViewById(R.id.noteSwipeListView);
+        final SwipeMenuListView listView = findViewById(R.id.noteSwipeListView);
 
         ArrayAdapter<Note> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, dataList);
         listView.setAdapter(adapter);
@@ -192,13 +203,34 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void onSwipeEnd(int position) {
+                final int pos = position;
                 if (position != -1) {
-                    SQLiteDatabase database = dbHelper.getWritableDatabase();
-                    database.delete(getString(R.string.table_notes_name), "id = ?", new String[]{String.valueOf(dataList.get(position).getId())});
-                    database.close();
-                    dbHelper.close();
-                    ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(dataList.get(position).getId());
-                    updateList();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(NoteListActivity.this);
+                    builder.setTitle(R.string.question_delete_element);
+                    builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            SQLiteDatabase database = dbHelper.getWritableDatabase();
+                            database.delete(getString(R.string.table_notes_name), "id = ?", new String[]{String.valueOf(dataList.get(pos).getId())});
+                            database.close();
+                            dbHelper.close();
+                            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(dataList.get(pos).getId());
+                            updateList();
+                        }
+                    });
+                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            listView.smoothCloseMenu();
+                        }
+                    });
+                    builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            listView.smoothCloseMenu();
+                        }
+                    });
+                    builder.create().show();
                 }
             }
         });
