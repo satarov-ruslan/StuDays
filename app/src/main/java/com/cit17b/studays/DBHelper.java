@@ -23,7 +23,7 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      * Версия базы данных.
      */
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     public DBHelper(Context context) {
         super(context, context.getString(R.string.db_name), null, DATABASE_VERSION);
@@ -41,6 +41,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.d(logTag, "onCreate database");
         db.execSQL(context.getString(R.string.create_table_lessons_sql));
         db.execSQL(context.getString(R.string.create_table_notes_sql));
+        db.execSQL(context.getString(R.string.create_table_notifications_sql));
     }
 
     /**
@@ -62,6 +63,8 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        if (oldVersion < 4) {
+            db.execSQL(context.getString(R.string.create_table_notifications_sql));
+        }
     }
 }

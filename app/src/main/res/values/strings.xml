@@ -7,8 +7,10 @@
     <string name="db_log_tag">DB_LOG</string>
     <string name="create_table_lessons_sql">CREATE TABLE IF NOT EXISTS lessons(id INTEGER PRIMARY KEY AUTOINCREMENT, name text, lectureHall text, hourBeginning int, minuteBeginning int, hourEnding int, minuteEnding int, lecturer text, lessonType text, dayOfTheWeek int, oddEvenWeek int);</string>
     <string name="create_table_notes_sql">CREATE TABLE IF NOT EXISTS notes(id INTEGER PRIMARY KEY AUTOINCREMENT, title text, noteText text);</string>
+    <string name="create_table_notifications_sql">CREATE TABLE IF NOT EXISTS notifications(noteId INTEGER PRIMARY KEY, timestamp INTEGER);</string>
     <string name="table_lessons_name">lessons</string>
     <string name="table_notes_name">notes</string>
+    <string name="table_notifications_name">notifications</string>
     <string name="lesson">Предмет</string>
     <string name="lecturer">Преподаватель</string>
     <string name="lecture_hall">Аудитория</string>

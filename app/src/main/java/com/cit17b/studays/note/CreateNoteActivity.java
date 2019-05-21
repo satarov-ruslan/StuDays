@@ -2,7 +2,6 @@ package com.cit17b.studays.note;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -12,23 +11,29 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
+import android.os.Parcel;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.cit17b.studays.DBHelper;
 import com.cit17b.studays.R;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -60,7 +65,10 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
      */
     private EditText noteTextField;
 
-    private long notificationDateTime;
+    /**
+     * Время появления уведомления в виде UNIX timestamp.
+     */
+    private long notificationTimestamp;
 
     /**
      * Кнопка удаления заметки.
@@ -131,32 +139,42 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
                         SQLiteDatabase database = dbHelper.getWritableDatabase();
                         if (intent.getIntExtra("requestCode", 0) == REQUEST_CODE_EDIT_NOTE
                                 && intent.hasExtra("id")) {
-                            database.delete(getString(R.string.table_notes_name), "id = ?", new String[]{String.valueOf(intent.getIntExtra("id", 0))});
+                            int noteId = intent.getIntExtra("id", 0);
+                            database.delete(getString(R.string.table_notes_name), "id = ?", new String[]{String.valueOf(noteId)});
+
+                            Cursor cursor = database.rawQuery("SELECT * FROM notifications WHERE noteId = ?", new String[]{String.valueOf(noteId)});
+                            if (cursor != null && cursor.moveToFirst()) {
+                                long loadedTimestamp = cursor.getLong(cursor.getColumnIndex("timestamp"));
+                                String title = titleField.getText().toString();
+                                String text = noteTextField.getText().toString();
+
+                                Intent deleteIntent = new Intent(getApplicationContext(), AlarmReceiver.class);
+                                deleteIntent.putExtra("id", noteId);
+                                deleteIntent.putExtra("timestamp", loadedTimestamp);
+                                deleteIntent.putExtra("title", title);
+                                deleteIntent.putExtra("text", text);
+
+                                PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), noteId, deleteIntent, 0);
+                                ((AlarmManager) getSystemService(Context.ALARM_SERVICE)).cancel(alarmIntent);
+                                database.delete(getString(R.string.table_notifications_name), "noteId = ?", new String[]{String.valueOf(noteId)});
+
+                                cursor.close();
+                            }
+
                             setResult(RESULT_OK, intent);
                         } else {
                             setResult(RESULT_CANCELED, intent);
-                        }
-
-                        if (notificationDateTime != 0 || notificationDateTime > System.currentTimeMillis()) {
-                            Cursor cursor = database.rawQuery("SELECT MAX(id) FROM " + getString(R.string.table_notes_name), null);
-                            if (cursor.getColumnCount() != 0) {
-                                cursor.moveToFirst();
-                                int lastNoteId = cursor.getInt(0);
-                                cursor.close();
-                                ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(lastNoteId);
-                            }
                         }
 
                         database.close();
                         dbHelper.close();
                         finish();
                     }
-                });
-                builder.setNegativeButton(R.string.cancel, null);
+                }).setNegativeButton(R.string.cancel, null);
                 builder.create().show();
                 break;
             case R.id.createNoteNotificationButton:
-                NotificationDialogFragment.newInstance(getString(R.string.notification), notificationDateTime).show(getSupportFragmentManager(), "notificationDialog");
+                NotificationDialogFragment.newInstance(getString(R.string.notification), notificationTimestamp).show(getSupportFragmentManager(), "notificationDialog");
                 break;
         }
     }
@@ -179,7 +197,9 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
             } else {
                 values.put("title", titleField.getText().toString());
             }
+
             values.put("noteText", noteTextField.getText().toString());
+
             if (intent.getIntExtra("requestCode", 0) == REQUEST_CODE_EDIT_NOTE
                     && intent.hasExtra("id")) {
                 int id = intent.getIntExtra("id", 0);
@@ -188,21 +208,20 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
                         "id = ?",
                         new String[]{String.valueOf(id)});
 
-                if (notificationDateTime != 0 || notificationDateTime > System.currentTimeMillis()) {
+                if (notificationTimestamp != 0 || notificationTimestamp > System.currentTimeMillis()) {
                     createNoteNotification(id);
                 }
             } else {
                 database.insert(getString(R.string.table_notes_name), null, values);
-            }
 
-            if (notificationDateTime != 0 || notificationDateTime > System.currentTimeMillis()) {
-                Cursor cursor = database.rawQuery("SELECT MAX(id) FROM notes", null);
-                cursor.moveToFirst();
-                int lastNoteId = cursor.getInt(0);
-                cursor.close();
-                createNoteNotification(lastNoteId);
-            } else {
-                ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancelAll();
+                if (notificationTimestamp != 0 || notificationTimestamp > System.currentTimeMillis()) {
+                    Cursor cursor = database.rawQuery("SELECT MAX(id) FROM notes", null);
+                    if (cursor != null && cursor.moveToFirst()) {
+                        int lastNoteId = cursor.getInt(0);
+                        cursor.close();
+                        createNoteNotification(lastNoteId);
+                    }
+                }
             }
 
             setResult(RESULT_OK, intent);
@@ -215,13 +234,29 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
 
     private void createNoteNotification(int noteId) {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
         Intent intent = new Intent(this, AlarmReceiver.class);
         intent.putExtra("id", noteId);
-        intent.putExtra("dateTime", notificationDateTime);
+        intent.putExtra("timestamp", notificationTimestamp);
         intent.putExtra("title", titleField.getText().toString());
         intent.putExtra("text", noteTextField.getText().toString());
         PendingIntent alarmIntent = PendingIntent.getBroadcast(this, noteId, intent, 0);
-        alarmManager.setExact(AlarmManager.RTC, notificationDateTime, alarmIntent);
+        alarmManager.setExact(AlarmManager.RTC, notificationTimestamp, alarmIntent);
+
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("timestamp", notificationTimestamp);
+        Cursor cursor = database.rawQuery("SELECT * FROM notifications WHERE noteId = ?", new String[]{String.valueOf(noteId)});
+        if (cursor != null && cursor.moveToFirst()) {
+            database.update(getString(R.string.table_notifications_name), values,"noteId = ?", new String[]{String.valueOf(noteId)});
+            cursor.close();
+        } else {
+            values.put("noteId", noteId);
+            database.insert(getString(R.string.table_notifications_name), null, values);
+        }
+
+        database.close();
+        dbHelper.close();
     }
 
     /**
@@ -250,20 +285,27 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
         if (intent.getIntExtra("requestCode", 0) == REQUEST_CODE_EDIT_NOTE
                 && intent.hasExtra("id")) {
             SQLiteDatabase database = dbHelper.getReadableDatabase();
+
             String selection = "id = ?";
             String[] selectionArgs = new String[]{String.valueOf(intent.getIntExtra("id", 0))};
-            Cursor cursor = database.query(getString(R.string.table_notes_name), null, selection, selectionArgs, null, null, null);
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    //int idColIndex = cursor.getColumnIndex("id");
-                    int titleColIndex = cursor.getColumnIndex("title");
-                    int noteTextColIndex = cursor.getColumnIndex("noteText");
 
-                    titleField.setText(cursor.getString(titleColIndex));
-                    noteTextField.setText(cursor.getString(noteTextColIndex));
-                }
+            Cursor cursor = database.query(getString(R.string.table_notes_name), null, selection, selectionArgs, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                int titleColIndex = cursor.getColumnIndex("title");
+                int noteTextColIndex = cursor.getColumnIndex("noteText");
+
+                titleField.setText(cursor.getString(titleColIndex));
+                noteTextField.setText(cursor.getString(noteTextColIndex));
                 cursor.close();
             }
+
+            selection = "noteId = ?";
+            cursor = database.query(getString(R.string.table_notifications_name), null, selection, selectionArgs, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                notificationTimestamp = cursor.getLong(cursor.getColumnIndex("timestamp"));
+                cursor.close();
+            }
+
             database.close();
             dbHelper.close();
         }
@@ -271,9 +313,7 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onFinishNotificationDialog(long input) {
-        notificationDateTime = input;
-        //String str = new SimpleDateFormat("yyyy.MM.dd - hh:mm.ss", Locale.getDefault()).format(new Date(notificationDateTime));
-        //Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+        notificationTimestamp = input;
     }
 
     public static class AlarmReceiver extends BroadcastReceiver {
@@ -283,7 +323,7 @@ public class CreateNoteActivity extends AppCompatActivity implements View.OnClic
         @Override
         public void onReceive(Context context, Intent intent) {
             int id = intent.getIntExtra("id", 0);
-            long dateTime = intent.getLongExtra("dateTime", 0);
+            long dateTime = intent.getLongExtra("timestamp", 0);
             String title = intent.getStringExtra("title");
             String text = intent.getStringExtra("text");
             Intent deleteIntent = new Intent(context, DeleteNoteService.class);

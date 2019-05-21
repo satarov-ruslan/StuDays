@@ -105,11 +105,11 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
                 builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        deleteAllNotifications();
                         SQLiteDatabase database = dbHelper.getWritableDatabase();
                         database.delete(getString(R.string.table_notes_name), null, null);
                         database.close();
                         dbHelper.close();
-                        deleteAllNotifications();
                         updateList();
                     }
                 });
@@ -120,12 +120,36 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void deleteAllNotifications() {
-        Intent intent = new Intent(this, DeleteNoteService.class);
-        for (Note note : dataList) {
-            PendingIntent pendingIntent = PendingIntent.getService(this, note.getId(), intent, 0);
-            ((AlarmManager) getSystemService(Context.ALARM_SERVICE)).cancel(pendingIntent);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+
+        Cursor notificationCursor = database.query(getString(R.string.table_notifications_name), null, null, null, null, null, null);
+        if (notificationCursor != null && notificationCursor.moveToFirst()) {
+            do {
+                int noteId = notificationCursor.getInt(notificationCursor.getColumnIndex("noteId"));
+                long notificationTimestamp = notificationCursor.getLong(notificationCursor.getColumnIndex("timestamp"));
+                Cursor noteCursor = database.query(getString(R.string.table_notes_name), null, "id = ?", new String[]{String.valueOf(noteId)}, null, null, null);
+                if (noteCursor != null && noteCursor.moveToFirst()) {
+                    String title = noteCursor.getString(noteCursor.getColumnIndex("title"));
+                    String text = noteCursor.getString(noteCursor.getColumnIndex("noteText"));
+                    noteCursor.close();
+
+                    Intent intent = new Intent(this, CreateNoteActivity.AlarmReceiver.class);
+                    intent.putExtra("id", noteId);
+                    intent.putExtra("timestamp", notificationTimestamp);
+                    intent.putExtra("title", title);
+                    intent.putExtra("text", text);
+
+                    PendingIntent alarmIntent = PendingIntent.getBroadcast(this, noteId, intent, 0);
+                    ((AlarmManager) getSystemService(Context.ALARM_SERVICE)).cancel(alarmIntent);
+                }
+            } while (notificationCursor.moveToNext());
+            notificationCursor.close();
         }
-        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancelAll();
+
+        database.delete(getString(R.string.table_notifications_name), null, null);
+
+        database.close();
+        dbHelper.close();
     }
 
     /**
@@ -171,7 +195,7 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
         ArrayAdapter<Note> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, dataList);
         listView.setAdapter(adapter);
 
-        SwipeMenuCreator creator = new SwipeMenuCreator() {
+        final SwipeMenuCreator creator = new SwipeMenuCreator() {
             @Override
             public void create(SwipeMenu menu) {
                 SwipeMenuItem deleteItem = new SwipeMenuItem(getApplicationContext());
@@ -211,10 +235,36 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             SQLiteDatabase database = dbHelper.getWritableDatabase();
-                            database.delete(getString(R.string.table_notes_name), "id = ?", new String[]{String.valueOf(dataList.get(pos).getId())});
+                            int noteId = dataList.get(pos).getId();
+                            String[] whereArgs = new String[]{String.valueOf(noteId)};
+
+                            Cursor cursor = database.query(getString(R.string.table_notes_name), null, "id = ?", whereArgs, null, null, null);
+                            if (cursor != null && cursor.moveToFirst()) {
+                                String title = cursor.getString(cursor.getColumnIndex("title"));
+                                String text = cursor.getString(cursor.getColumnIndex("noteText"));
+                                cursor.close();
+
+                                cursor = database.query(getString(R.string.table_notifications_name), null, "noteId = ?", whereArgs, null, null, null);
+                                if (cursor != null && cursor.moveToFirst()) {
+                                    long notificationTimestamp = cursor.getLong(cursor.getColumnIndex("timestamp"));
+                                    cursor.close();
+
+                                    Intent intent = new Intent(getApplicationContext(), CreateNoteActivity.AlarmReceiver.class);
+                                    intent.putExtra("id", noteId);
+                                    intent.putExtra("timestamp", notificationTimestamp);
+                                    intent.putExtra("title", title);
+                                    intent.putExtra("text", text);
+
+                                    PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), noteId, intent, 0);
+                                    ((AlarmManager) getSystemService(Context.ALARM_SERVICE)).cancel(alarmIntent);
+                                }
+                            }
+
+                            database.delete(getString(R.string.table_notes_name), "id = ?", whereArgs);
+                            database.delete(getString(R.string.table_notifications_name), "noteId = ?", whereArgs);
                             database.close();
                             dbHelper.close();
-                            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(dataList.get(pos).getId());
+
                             updateList();
                         }
                     });
@@ -253,7 +303,7 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
         dataList.clear();
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         Cursor cursor = database.query(getString(R.string.table_notes_name), null, null, null, null, null, "id DESC");
-        if (cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             int idColIndex = cursor.getColumnIndex("id");
             int titleColIndex = cursor.getColumnIndex("title");
             int noteTextColIndex = cursor.getColumnIndex("noteText");
@@ -264,8 +314,8 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
                 note.setNoteText(cursor.getString(noteTextColIndex));
                 dataList.add(note);
             } while (cursor.moveToNext());
+            cursor.close();
         }
-        cursor.close();
         database.close();
         dbHelper.close();
     }
