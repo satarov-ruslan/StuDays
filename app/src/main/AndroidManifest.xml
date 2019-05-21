@@ -21,14 +21,6 @@
             android:name=".note.NoteListActivity"
             android:label="@string/notes" />
         <activity
-            android:name=".lesson.DayOfTheWeekDialog"
-            android:label="@string/day_of_the_week"
-            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
-        <activity
-            android:name=".lesson.LessonTypeDialog"
-            android:label="@string/lesson_type"
-            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
-        <activity
             android:name=".lesson.CreateLessonActivity"
             android:label="@string/create" />
         <activity android:name=".MainActivity">

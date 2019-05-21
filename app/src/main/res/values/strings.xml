@@ -67,6 +67,7 @@
         <item>Сб</item>
         <item>Вс</item>
     </string-array>
+    <string name="repeating">Повторение</string>
     <string-array name="odd_even_week">
         <item>По нечетным</item>
         <item>По четным</item>

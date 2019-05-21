@@ -1,7 +1,9 @@
 package com.cit17b.studays.lesson;
 
+import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -29,14 +31,14 @@ import java.util.Locale;
  *
  * @author Ruslan Satarov
  * @version 1.2.3
- * */
+ */
 public class CreateLessonActivity extends AppCompatActivity implements View.OnClickListener {
 
     /**
      * Параметры используются при вызове данного Activity из других классов.
      * Параметры позволяют указать цель вызова Activity и на основе этого
      * задать начальное состояние полей Activity.
-     * */
+     */
     public static final int REQUEST_CODE_CREATE_LESSON = 1001;
     public static final int REQUEST_CODE_EDIT_LESSON = 1002;
 
@@ -45,13 +47,12 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
      * для выбора типа занятия или для недели. При проверки результатов работы диалогового окна
      * параметры позволяют определить, что за диалоговое окно вызывалось, и на основе этого
      * обработать результаты работы.
-     * */
-    private static final int REQUEST_CODE_LESSON_TYPE = 101;
+     */
     private static final int REQUEST_CODE_DAY_OF_THE_WEEK = 102;
 
     /**
      * Поле "Предмет".
-     * */
+     */
     private EditText name;
 
     /**
@@ -124,7 +125,7 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
     /**
      * Массив, хранящий дни недели в текстовом виде в сокращенном формате.
      */
-    private String[] daysOfTheWeekAbridgedArray;
+    private String[] daysOfTheWeekArray;
 
     /**
      * Массив, хранящий череды недели в текстовом формате.
@@ -159,7 +160,7 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
 
         dbHelper = new DBHelper(this);
 
-        daysOfTheWeekAbridgedArray = getResources().getStringArray(R.array.days_of_the_week_abridged);
+        daysOfTheWeekArray = getResources().getStringArray(R.array.days_of_the_week);
         lessonTypesArray = getResources().getStringArray(R.array.lesson_types);
         oddEvenWeekArray = getResources().getStringArray(R.array.odd_even_week);
 
@@ -171,17 +172,17 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         hourEnding = findViewById(R.id.createLessonHourEnding);
         minuteEnding = findViewById(R.id.createLessonMinuteEnding);
         lessonType = findViewById(R.id.createLessonTypeField);
-        oddEvenWeek = findViewById(R.id.createLessonOddEvenWeekField);
         dayOfTheWeek = findViewById(R.id.createLessonDayOfTheWeekField);
+        oddEvenWeek = findViewById(R.id.createLessonOddEvenWeekField);
 
         LinearLayout timeBeginningLayout = findViewById(R.id.createLessonBeginningLayout);
         LinearLayout timeEndingLayout = findViewById(R.id.createLessonEndingLayout);
-        LinearLayout dayOfTheWeekLayout = findViewById(R.id.createLessonDayOfTheWeekLayout);
 
         timeBeginningLayout.setOnClickListener(this);
         timeEndingLayout.setOnClickListener(this);
         lessonType.setOnClickListener(this);
-        dayOfTheWeekLayout.setOnClickListener(this);
+        dayOfTheWeek.setOnClickListener(this);
+        oddEvenWeek.setOnClickListener(this);
 
         fillFields();
 
@@ -219,9 +220,8 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
      * Вызывается при выборе элемента меню.
      *
      * @param item Выбранный элемент меню.
-     *
      * @return Верните false, чтобы разрешить нормальную обработку меню,
-     *         true, чтобы использовать ее здесь.
+     * true, чтобы использовать ее здесь.
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -296,6 +296,7 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View v) {
         Intent intent;
+        AlertDialog.Builder builder;
         switch (v.getId()) {
             case R.id.createLessonBeginningLayout:
                 new TimePickerDialog(this,
@@ -314,44 +315,40 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
                         true).show();
                 break;
             case R.id.createLessonTypeField:
-                intent = new Intent(this, LessonTypeDialog.class);
-                startActivityForResult(intent, REQUEST_CODE_LESSON_TYPE);
+                builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.lesson_type)
+                        .setItems(R.array.lesson_types, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                lessonType.setText(lessonTypesArray[which]);
+                            }
+                        })
+                        .show();
                 break;
-            case R.id.createLessonDayOfTheWeekLayout:
-                intent = new Intent(this, DayOfTheWeekDialog.class);
-                startActivityForResult(intent, REQUEST_CODE_DAY_OF_THE_WEEK);
+            case R.id.createLessonDayOfTheWeekField:
+                builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.day_of_the_week)
+                        .setItems(R.array.days_of_the_week, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dayOfTheWeekNumber = which;
+                                dayOfTheWeek.setText(daysOfTheWeekArray[which]);
+                            }
+                        })
+                        .show();
                 break;
-        }
-    }
-
-    /**
-     * Вызывается, когда вызванное Activity завершает работу, давая requestCode, с которым оно
-     * было вызвано, resultCode и, возможно, дополнительные данные.
-     *
-     * @param requestCode Код, с которым было вызвано Activity.
-     * @param resultCode Код, идентифицирующий результат работы дочернего Activity.
-     * @param data Intent, который может содержать результирующие данные.
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case REQUEST_CODE_LESSON_TYPE:
-                    int lessonTypeIndex = data.getIntExtra("lessonType", 0);
-                    lessonType.setText(lessonTypesArray[lessonTypeIndex]);
-                    break;
-                case REQUEST_CODE_DAY_OF_THE_WEEK:
-                    if (data.hasExtra("dayOfTheWeek")) {
-                        dayOfTheWeekNumber = data.getIntExtra("dayOfTheWeek", 0);
-                        dayOfTheWeek.setText(daysOfTheWeekAbridgedArray[dayOfTheWeekNumber]);
-                    }
-                    if (data.hasExtra("oddEvenWeek")) {
-                        oddEvenWeekNumber = data.getIntExtra("oddEvenWeek", 0);
-                        oddEvenWeek.setText(oddEvenWeekArray[oddEvenWeekNumber]);
-                    }
-                    break;
-            }
+            case R.id.createLessonOddEvenWeekField:
+                builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.repeating)
+                        .setItems(R.array.odd_even_week, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                oddEvenWeekNumber = which;
+                                oddEvenWeek.setText(oddEvenWeekArray[which]);
+                            }
+                        })
+                        .show();
+                break;
         }
     }
 
@@ -395,7 +392,7 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
                     oddEvenWeekNumber = cursor.getInt(oddEvenWeekColIndex);
                     oddEvenWeek.setText(oddEvenWeekArray[oddEvenWeekNumber]);
                     dayOfTheWeekNumber = cursor.getInt(dayOfTheWeekColIndex);
-                    dayOfTheWeek.setText(daysOfTheWeekAbridgedArray[dayOfTheWeekNumber]);
+                    dayOfTheWeek.setText(daysOfTheWeekArray[dayOfTheWeekNumber]);
                 }
 
                 cursor.close();
@@ -407,7 +404,7 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
             oddEvenWeekNumber = 2;
             oddEvenWeek.setText(oddEvenWeekArray[2]);
             dayOfTheWeekNumber = 0;
-            dayOfTheWeek.setText(daysOfTheWeekAbridgedArray[0]);
+            dayOfTheWeek.setText(daysOfTheWeekArray[0]);
         }
     }
 

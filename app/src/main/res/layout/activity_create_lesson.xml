@@ -211,7 +211,6 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
             android:layout_weight="1">
 
             <TextView
@@ -223,44 +222,54 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:layout_alignStart="@+id/createLessonDayOfTheWeekLayout"
-                android:layout_alignEnd="@+id/createLessonDayOfTheWeekLayout"
-                android:layout_alignBottom="@+id/createLessonDayOfTheWeekLayout"
+                android:layout_alignStart="@+id/createLessonDayOfTheWeekField"
+                android:layout_alignEnd="@+id/createLessonDayOfTheWeekField"
+                android:layout_alignBottom="@+id/createLessonDayOfTheWeekField"
                 android:background="@android:color/darker_gray" />
 
-            <LinearLayout
-                android:id="@+id/createLessonDayOfTheWeekLayout"
+            <TextView
+                android:id="@+id/createLessonDayOfTheWeekField"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:orientation="horizontal">
+                android:textSize="22sp"
+                android:textStyle="bold"
+                tools:text="Вторник" />
 
-                <TextView
-                    android:id="@+id/createLessonOddEvenWeekField"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    tools:text="Каждую неделю" />
+        </RelativeLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="4dp"
-                    android:text="@string/vertical_bar"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1">
 
-                <TextView
-                    android:id="@+id/createLessonDayOfTheWeekField"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    tools:text="Вт" />
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:text="@string/repeating" />
 
-            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_alignStart="@+id/createLessonOddEvenWeekField"
+                android:layout_alignEnd="@+id/createLessonOddEvenWeekField"
+                android:layout_alignBottom="@+id/createLessonOddEvenWeekField"
+                android:background="@android:color/darker_gray" />
+
+            <TextView
+                android:id="@+id/createLessonOddEvenWeekField"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:layout_alignParentEnd="true"
+                android:textStyle="bold"
+                tools:text="Каждую неделю" />
 
         </RelativeLayout>
 

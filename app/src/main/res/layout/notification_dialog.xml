@@ -39,7 +39,8 @@
         android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView5" />
+        app:layout_constraintTop_toTopOf="@+id/textView5"
+        tools:text="8:30" />
 
     <TextView
         android:id="@+id/textView7"
@@ -73,7 +74,8 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="12dp"
         android:textSize="22sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:text="25.02.2019" />
 
     <View
         android:id="@+id/divider3"
