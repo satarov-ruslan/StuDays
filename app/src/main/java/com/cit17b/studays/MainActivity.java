@@ -1,5 +1,6 @@
 package com.cit17b.studays;
 
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -14,7 +15,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 
 import com.cit17b.studays.lesson.CreateLessonActivity;
 import com.cit17b.studays.note.NoteListActivity;
@@ -62,6 +67,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
      */
     private FloatingActionButton noteButton;
 
+    private View popupMenuAnchor;
+
     /**
      * Вызывается при создании Activity.
      *
@@ -88,6 +95,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         noteButton = findViewById(R.id.noteButton);
         noteButton.setOnClickListener(this);
+
+        popupMenuAnchor = findViewById(R.id.popupMenuAnchor);
     }
 
     /**
@@ -141,11 +150,38 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(getString(R.string.notification_channel_id), name, importance);
             channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_MENU:
+                PopupMenu popupMenu = new PopupMenu(this, popupMenuAnchor);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.aboutProgramButton:
+                                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                builder.setTitle(R.string.about_program)
+                                        .setMessage(R.string.about_program_details)
+                                        .show();
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.inflate(R.menu.menu_main_activity);
+                popupMenu.show();
+                return true;
+            case KeyEvent.KEYCODE_BACK:
+                finish();
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     /**

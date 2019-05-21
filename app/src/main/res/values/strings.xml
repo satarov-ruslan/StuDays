@@ -11,6 +11,8 @@
     <string name="table_lessons_name">lessons</string>
     <string name="table_notes_name">notes</string>
     <string name="table_notifications_name">notifications</string>
+    <string name="about_program">О программе</string>
+    <string name="about_program_details">StuDays v0.4\nСоздатели\nПрограммист: Сатаров Руслан\nДизайнер: Чернев Константин\nТестировщик: Глущук Анастасия\nМенеджер проекта: Середин Никита\nБизнес-аналитик: Шевель Антон</string>
     <string name="lesson">Предмет</string>
     <string name="lecturer">Преподаватель</string>
     <string name="lecture_hall">Аудитория</string>
