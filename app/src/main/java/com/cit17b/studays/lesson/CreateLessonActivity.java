@@ -43,14 +43,6 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
     public static final int REQUEST_CODE_EDIT_LESSON = 1002;
 
     /**
-     * Данный Activity использует эти параметры при создании диалоговых окон
-     * для выбора типа занятия или для недели. При проверки результатов работы диалогового окна
-     * параметры позволяют определить, что за диалоговое окно вызывалось, и на основе этого
-     * обработать результаты работы.
-     */
-    private static final int REQUEST_CODE_DAY_OF_THE_WEEK = 102;
-
-    /**
      * Поле "Предмет".
      */
     private EditText name;
@@ -142,13 +134,6 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
      */
     private DBHelper dbHelper;
 
-    /**
-     * Вызывается при создании Activity.
-     *
-     * @param savedInstanceState Если Activity было заново инициализировано после того, как
-     *                           было закрыто, тогда этот Bundle содержит, которые он получил
-     *                           в onSaveInstanceState. В другом случае это null.
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -203,12 +188,6 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         };
     }
 
-    /**
-     * Вызывается при создании меню Activity.
-     *
-     * @param menu Меню, в котором будут располагаться заданные элементы.
-     * @return Должен возвращаться true, чтоб меню отображалось.
-     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_create_lesson, menu);
@@ -216,13 +195,6 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         return super.onCreateOptionsMenu(menu);
     }
 
-    /**
-     * Вызывается при выборе элемента меню.
-     *
-     * @param item Выбранный элемент меню.
-     * @return Верните false, чтобы разрешить нормальную обработку меню,
-     * true, чтобы использовать ее здесь.
-     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = getIntent();
@@ -254,10 +226,8 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
                                     values,
                                     "id = ?",
                                     new String[]{String.valueOf(intent.getIntExtra("id", 0))});
-                            Log.d(getString(R.string.db_log_tag), "row updated, ID = " + rowID);
                         } else {
                             long rowID = database.insert(getString(R.string.table_lessons_name), null, values);
-                            Log.d(getString(R.string.db_log_tag), "row inserted, ID = " + rowID);
                         }
 
                         database.close();
@@ -277,9 +247,6 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Вызывается при нажатии аппаратной кнопки "Назад".
-     */
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
@@ -288,14 +255,8 @@ public class CreateLessonActivity extends AppCompatActivity implements View.OnCl
         finish();
     }
 
-    /**
-     * Вызывается, когда View было нажато.
-     *
-     * @param v View, которое было нажато.
-     */
     @Override
     public void onClick(View v) {
-        Intent intent;
         AlertDialog.Builder builder;
         switch (v.getId()) {
             case R.id.createLessonBeginningLayout:

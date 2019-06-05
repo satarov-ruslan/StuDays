@@ -51,13 +51,6 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
      */
     private DBHelper dbHelper;
 
-    /**
-     * Вызывается при создании Activity.
-     *
-     * @param savedInstanceState Если Activity было заново инициализировано после того, как
-     *                           было закрыто, тогда этот Bundle содержит, которые он получил
-     *                           в onSaveInstanceState. В другом случае это null.
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,12 +66,6 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
         updateList();
     }
 
-    /**
-     * Вызывается при создании меню Activity.
-     *
-     * @param menu Меню, в котором будут располагаться заданные элементы.
-     * @return Должен возвращаться true, чтоб меню отображалось.
-     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_note_list, menu);
@@ -86,13 +73,6 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
         return super.onCreateOptionsMenu(menu);
     }
 
-    /**
-     * Вызывается при выборе элемента меню.
-     *
-     * @param item Выбранный элемент меню.
-     * @return Верните false, чтобы разрешить нормальную обработку меню,
-     * true, чтобы использовать ее здесь.
-     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -152,11 +132,6 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
         dbHelper.close();
     }
 
-    /**
-     * Вызывается, когда View было нажато.
-     *
-     * @param v View, которое было нажато.
-     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -168,14 +143,6 @@ public class NoteListActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    /**
-     * Вызывается, когда вызванное Activity завершает работу, давая requestCode, с которым оно
-     * было вызвано, resultCode и, возможно, дополнительные данные.
-     *
-     * @param requestCode Код, с которым было вызвано Activity.
-     * @param resultCode  Код, идентифицирующий результат работы дочернего Activity.
-     * @param data        Intent, который может содержать результирующие данные.
-     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

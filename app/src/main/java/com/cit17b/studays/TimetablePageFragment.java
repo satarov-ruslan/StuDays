@@ -41,11 +41,6 @@ public class TimetablePageFragment extends Fragment {
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
 
     /**
-     * Тег логирования.
-     */
-    static final String TIMETABLE_PAGE_FRAGMENT_LOG = "TIMETABLE_PAGE_FRAGMENT";
-
-    /**
      * Идентификаторы элементов контекстного меню страницы.
      */
     public static final int CONTEXT_MENU_EDIT = 10001;
@@ -65,11 +60,6 @@ public class TimetablePageFragment extends Fragment {
      * Layout, располагающий в себе View с занятиями.
      */
     private LinearLayout lessonList;
-
-    /**
-     * Массив, содержащий в себе View с занятиями.
-     */
-    private LinearLayout[] daysOfTheWeekLayouts;
 
     /**
      * Массив с названиями дней недели.
@@ -94,27 +84,16 @@ public class TimetablePageFragment extends Fragment {
         return fragment;
     }
 
-    /**
-     * Вызывается при создании Activity.
-     *
-     * @param savedInstanceState Если Activity было заново инициализировано после того, как
-     *                           было закрыто, тогда этот Bundle содержит, которые он получил
-     *                           в onSaveInstanceState. В другом случае это null.
-     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pageNumber = getArguments().getInt(ARGUMENT_PAGE_NUMBER);
-        Log.d(TIMETABLE_PAGE_FRAGMENT_LOG, "pageNumber = " + pageNumber);
         dbHelper = new DBHelper(getContext());
 
         dataList = new ArrayList<>();
         daysOfTheWeekLabels = getResources().getStringArray(R.array.days_of_the_week);
     }
 
-    /**
-     * Вызывается при возможности взаимодействовать с фрагментом.
-     */
     @Override
     public void onResume() {
         fillDataListFromDB();
@@ -122,19 +101,6 @@ public class TimetablePageFragment extends Fragment {
         super.onResume();
     }
 
-    /**
-     * Вызывается чтоб отрисовать интерфейс фрагмента.
-     *
-     * @param inflater           Объект, который может быть использован,
-     *                           чтоб вставить представления в фрагмент.
-     * @param container          Если не null, это родительское представление, к которому
-     *                           должен быть присоединен пользовательский интерфейс фрагмента.
-     *                           Фрагмент не должен добавлять само представление,
-     *                           но это можно использовать для генерации LayoutParams представления.
-     * @param savedInstanceState Если не null, этот фрагмент восстанавливается
-     *                           из предыдущего сохраненного состояния как дано здесь.
-     * @return Представление для пользовательского интерфейса фрагмента или null.
-     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -143,15 +109,6 @@ public class TimetablePageFragment extends Fragment {
         return view;
     }
 
-    /**
-     * Вызывается при создании контекстного меню.
-     *
-     * @param menu     Контекстное меню, которое создается.
-     * @param v        Представление, для которого создается контекстное меню.
-     * @param menuInfo Дополнительная информация об элементе, для которого
-     *                 должно отображаться контекстное меню.
-     *                 Эта информация будет варьироваться в зависимости от класса v.
-     */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -160,13 +117,6 @@ public class TimetablePageFragment extends Fragment {
         lessonIdSelected = v.getId();
     }
 
-    /**
-     * Вызывается, когда выбран элемент контекстного меню.
-     *
-     * @param item Элемент контекстного меню.
-     * @return Возвращает false, чтобы разрешить нормальную обработку контекстного меню,
-     * true для использования здесь.
-     */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -205,14 +155,6 @@ public class TimetablePageFragment extends Fragment {
         return super.onContextItemSelected(item);
     }
 
-    /**
-     * Вызывается, когда вызванное Activity завершает работу, давая requestCode, с которым оно
-     * было вызвано, resultCode и, возможно, дополнительные данные.
-     *
-     * @param requestCode Код, с которым было вызвано Activity.
-     * @param resultCode  Код, идентифицирующий результат работы дочернего Activity.
-     * @param data        Intent, который может содержать результирующие данные.
-     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -233,7 +175,7 @@ public class TimetablePageFragment extends Fragment {
     void fillLessonList() {
         lessonList.removeAllViews();
 
-        daysOfTheWeekLayouts = new LinearLayout[7];
+        LinearLayout[] daysOfTheWeekLayouts = new LinearLayout[7];
 
         for (int i = 0; i < daysOfTheWeekLayouts.length; i++) {
             ArrayList<Lesson> filteredByDayOfWeek = new ArrayList<>();
@@ -344,7 +286,7 @@ public class TimetablePageFragment extends Fragment {
     /**
      * Заполняет View-єлемент данными из объекта.
      *
-     * @param lessonItem     Представление для заполнения.
+     * @param lessonItem     View для заполнения.
      * @param lesson         Занятие.
      * @param positionInList Позиция в списке.
      */
